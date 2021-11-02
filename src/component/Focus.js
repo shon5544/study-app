@@ -17,18 +17,20 @@ export default ({navigation, route})=>{
     const [firstM, setFirstM] = useState(minute);
     const [firstS, setFirstS] = useState(sec);
 
-    const [restart, setRestart] = useState(false);
-    const [startPoint, setStartPoint] = useState(0);
+    const [loopState, setLoopState] = useState(true);
+    // const [startPoint, setStartPoint] = useState(0);
 
     const interval = useRef();
 
     function plus(){
-        setSet(set+1);
+        setSet((set) => set+1);
+        // setStartPoint((startPoint)=> startPoint + 1);
     }
 
     function minus(){
         if(set > 1){
-            setSet(set-1)
+            setSet((set)=>set-1)
+            // setStartPoint((startPoint)=> startPoint - 1);
         }
     }
 
@@ -62,6 +64,15 @@ export default ({navigation, route})=>{
         setPercent(()=>(parseFloat((current / total * 100).toFixed(1))));
         console.log(`value : ${(current / total * 100).toFixed(1)} || total : ${total}, current : ${current}`);
     }
+
+    function init(){
+        setTime(firstT);
+        setMinute(firstM);
+        setSec(firstS);
+        setCurrent(0);
+        setPercent(0);
+        clearInterval(interval.current);
+    }
     
     useEffect(()=>{
         if(startState && !stopState){
@@ -70,22 +81,43 @@ export default ({navigation, route})=>{
             clearInterval(interval.current);
         }
 
+        //문제는 여기있다 이거해놓고 졸라이상해졌음 고쳐놓을것 그리고 휴식모드로 가는 조건 useEffect 이런거 자세히 살펴볼것
+        // if(!loopState){
+        //     setTime(firstT);
+        //     setMinute(firstM);
+        //     setSec(firstS);
+        //     setCurrent(0);
+        //     setPercent(0);
+        //     clearInterval(interval.current);
+        //     if(set >= 1){
+        //         setSet((set)=>set-1);
+        //         // setStartPoint((startPoint)=>startPoint - 1);
+        //         // clearInterval(interval.current);
+        //         setStopState(true);
+        //         console.log(set);
+        //         if(set > 0){
+        //             navigation.navigate('휴식');
+        //         }
+        //     }
+        // }
+
         if(!startState){
-            setTime(firstT);
-            setMinute(firstM);
-            setSec(firstS);
-            setCurrent(0);
-            setPercent(0);
-            clearInterval(interval.current);
-            if(set > 1){
-                setSet(set - 1);
-                setStartPoint((startPoint)=>startPoint + 1);
-                navigation.navigate('휴식');
-            }
+            init();
         }
 
+        //startState가 핵심키
+
         if(time === 0 && minute === 0 && sec === 0){
-            setStartState(false);
+            // setLoopState(false);
+            // setStartState(false);
+            if(set - 1 > 0){
+                setSet((set)=>set-1);
+                init();
+                navigation.navigate('휴식');
+            } else {
+                setSet(()=>1);
+                setStartState(false);
+            }
         }
 
         return ()=>{
@@ -93,12 +125,12 @@ export default ({navigation, route})=>{
         }
     }, [sec, startState, stopState]);
 
-    useState(()=>{
-        if(startPoint >= 1){
-            setStartState(true);
-            setStartPoint((startPoint)=> startPoint - 1);
+    useEffect(()=>{
+        if(set <= 0){
+            setSet(1);
+            setStartState(false);
         }
-    }, []);
+    }, [set]);
 
     return(
         <View style={styles.container}>
@@ -179,7 +211,10 @@ export default ({navigation, route})=>{
                 <TouchableOpacity
                 onPress={()=>{
                     setTotal(time*60*60 + minute*60 + sec);
-                    setStartState(!startState);
+                    // if(set > 1){
+                    //     setLoopState(true);
+                    // }
+                    setStartState((startState)=>!startState);
                 }}
                 style={{
                     flexDirection: 'row',

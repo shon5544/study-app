@@ -55,7 +55,7 @@ export default ({navigation})=> {
             
             <TouchableOpacity
                 onPress={()=>{
-                    navigation.navigate('메인');
+                    navigation.navigate('메인', {state: true});
                 }}
                 style={[styles.button, {
                     marginTop: 20,
