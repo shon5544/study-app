@@ -1,15 +1,24 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 
-export default ()=>{
+export default ({navigation, route})=>{
     const [set, setSet] = useState(1);
     const [startState, setStartState] = useState(false);
+    const [stopState, setStopState] = useState(false);
     const [time, setTime] = useState(0);
     const [minute, setMinute] = useState(25);
     const [sec, setSec] = useState(0);
     const [current, setCurrent] = useState(0);
-    const [total, setTotal] = useState(25*60);
+    const [total, setTotal] = useState(0);
+    const [percent, setPercent] = useState(0);
+
+    const [firstT, setFirstT] = useState(time);
+    const [firstM, setFirstM] = useState(minute);
+    const [firstS, setFirstS] = useState(sec);
+
+    const [restart, setRestart] = useState(false);
+    const [startPoint, setStartPoint] = useState(0);
 
     const interval = useRef();
 
@@ -42,37 +51,60 @@ export default ()=>{
 
     function secMinus(){
         if(sec > 0){
-            setSec(sec - 1);
+            setSec((sec)=> sec - 1);
+            // setCurrent(current + 1);
         } else if (sec === 0) {
             minMinus();
             setSec(59);
         }
-
-        setCurrent(current + 1);
-        console.log(`value : ${(current / total * 100).toFixed(1)}`);
+        
+        setCurrent((current)=>(current + 1));
+        setPercent(()=>(parseFloat((current / total * 100).toFixed(1))));
+        console.log(`value : ${(current / total * 100).toFixed(1)} || total : ${total}, current : ${current}`);
     }
-
+    
     useEffect(()=>{
-        if(startState){
+        if(startState && !stopState){
             interval.current = setInterval(secMinus, 1000);
-        } else {
+        } else if(startState && stopState) {
             clearInterval(interval.current);
         }
 
-        if(time === 0 && minute === 0 && sec === 0){
+        if(!startState){
+            setTime(firstT);
+            setMinute(firstM);
+            setSec(firstS);
+            setCurrent(0);
+            setPercent(0);
             clearInterval(interval.current);
+            if(set > 1){
+                setSet(set - 1);
+                setStartPoint((startPoint)=>startPoint + 1);
+                navigation.navigate('휴식');
+            }
+        }
+
+        if(time === 0 && minute === 0 && sec === 0){
+            setStartState(false);
         }
 
         return ()=>{
             clearInterval(interval.current);
         }
-    }, [sec, startState]);
+    }, [sec, startState, stopState]);
+
+    useState(()=>{
+        if(startPoint >= 1){
+            setStartState(true);
+            setStartPoint((startPoint)=> startPoint - 1);
+        }
+    }, []);
 
     return(
         <View style={styles.container}>
             <View style={{
                 flexDirection: 'row',
-                backgroundColor: '#ffffff', 
+                backgroundColor: '#ffffff',
                 shadowColor: "#000",
                 shadowOffset:{
                 width: 0,
@@ -102,7 +134,7 @@ export default ()=>{
             </View>
             <View style={styles.timerContainer}>
                 <ProgressCircle
-                    percent={parseFloat((current / total * 100).toFixed(1))}
+                    percent={percent}
                     radius={90}
                     borderWidth={8}
                     color="#3399FF"
@@ -131,21 +163,22 @@ export default ()=>{
                     borderRadius: 10,
                     marginTop: 30
                     }}>
-                    <TextInput placeholder="시간" onChangeText={(value)=> {
+                    <TextInput placeholder="시간" keyboardType='numeric' onChangeText={(value)=> {
                         setTime(parseInt(value));
-                        setTotal(total + 60*60*parseInt(value));
+                        setFirstT(parseInt(value));
                     }} style={{paddingRight: 7, borderColor: '#EBEBEB', borderRightWidth: 2, textAlign:"center",  paddingLeft: 3}}/>
-                    <TextInput placeholder="분" onChangeText={(value)=> {
+                    <TextInput placeholder="분" keyboardType='numeric' onChangeText={(value)=> {
                         setMinute(parseInt(value));
-                        setTotal(total + 60*parseInt(value));
+                        setFirstM(parseInt(value));
                     }} style={{paddingRight: 3, borderColor: '#EBEBEB', borderRightWidth: 2, paddingLeft: 10}}/>
-                    <TextInput placeholder="초" onChangeText={(value)=> {
+                    <TextInput placeholder="초" keyboardType="numeric" onChangeText={(value)=> {
                         setSec(parseInt(value));
-                        setTotal(total + parseInt(value));
+                        setFirstS(parseInt(value));
                     }} style={{paddingLeft: 10}}/>
                 </View>
                 <TouchableOpacity
                 onPress={()=>{
+                    setTotal(time*60*60 + minute*60 + sec);
                     setStartState(!startState);
                 }}
                 style={{
@@ -172,7 +205,7 @@ export default ()=>{
             :<View>
                 <TouchableOpacity
                 onPress={()=>{
-                    setStartState(!startState);
+                    setStopState(!stopState);
                 }}
                 style={{
                     flexDirection: 'row',
@@ -197,6 +230,11 @@ export default ()=>{
                 <TouchableOpacity
                 onPress={()=>{
                     setStartState(!startState);
+                    // setTime(firstT);
+                    // setMinute(firstM);
+                    // setSec(firstS);
+                    // setCurrent(0);
+                    // setPercent(0);
                 }}
                 style={{
                     flexDirection: 'row',
