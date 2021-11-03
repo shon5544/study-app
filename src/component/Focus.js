@@ -23,18 +23,19 @@ export default ({navigation, route})=>{
     const interval = useRef();
 
     function plus(){
-        setSet((set) => set+1);
+        setSet((set)=>set+1);
         // setStartPoint((startPoint)=> startPoint + 1);
         setLoopState(true);
     }
 
     function minus(){
         if(set > 1){
-            setSet((set)=>set-1)
+            setSet((set)=>set-1);
             // setStartPoint((startPoint)=> startPoint - 1);
-        } else {
-            setLoopState(false);
         }
+        
+        // console.log(set);
+        // console.log(loopState);
     }
 
     // 2 -> 1 : setLoopState(false);
@@ -132,10 +133,10 @@ export default ({navigation, route})=>{
             //     setLoopState(false);
             // }
 
-            if(loopState){
+            if(set>1){
                 minus();
                 init();
-                clearInterval(interval.current);
+                setStartState(false);
                 navigation.navigate('휴식');
             } else {
                 init();
