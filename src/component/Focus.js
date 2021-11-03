@@ -25,14 +25,19 @@ export default ({navigation, route})=>{
     function plus(){
         setSet((set) => set+1);
         // setStartPoint((startPoint)=> startPoint + 1);
+        setLoopState(true);
     }
 
     function minus(){
         if(set > 1){
             setSet((set)=>set-1)
             // setStartPoint((startPoint)=> startPoint - 1);
+        } else {
+            setLoopState(false);
         }
     }
+
+    // 2 -> 1 : setLoopState(false);
 
     function timeMinus(){
         if(time > 0){
@@ -66,12 +71,13 @@ export default ({navigation, route})=>{
     }
 
     function init(){
+        clearInterval(interval.current);
+        // setStopState(false);
         setTime(firstT);
         setMinute(firstM);
         setSec(firstS);
         setCurrent(0);
         setPercent(0);
-        clearInterval(interval.current);
     }
     
     useEffect(()=>{
@@ -106,31 +112,42 @@ export default ({navigation, route})=>{
         }
 
         //startState가 핵심키
-
+        //loopState를 만들어서 이용해보자
         if(time === 0 && minute === 0 && sec === 0){
             // setLoopState(false);
             // setStartState(false);
-            if(set - 1 > 0){
-                setSet((set)=>set-1);
+
+            //만약에 세트가 1보다 크면 ex) 세트=2
+            // 3가지 경우로 나누는게 좋을듯. 세트가 두개 이상일때, 세트가 하나 남았을때, 세트가 없을때.
+            // if(set > 1){
+            //     //여기서 반복을 하고
+            //     setSet((set)=>set-1);
+            //     init();
+            //     if(loopState){
+            //         navigation.navigate('휴식');
+            //     }
+            // } else if(set === 1){ //세트가 1이라면
+            //     //반복을 끄고 시간이 다되었는데 반복이 꺼져있으면 startState false로
+            //     setSet(()=>1);
+            //     setLoopState(false);
+            // }
+
+            if(loopState){
+                minus();
                 init();
+                clearInterval(interval.current);
                 navigation.navigate('휴식');
             } else {
-                setSet(()=>1);
+                init();
                 setStartState(false);
             }
         }
 
         return ()=>{
             clearInterval(interval.current);
+            // console.log('component is unmounted');
         }
     }, [sec, startState, stopState]);
-
-    useEffect(()=>{
-        if(set <= 0){
-            setSet(1);
-            setStartState(false);
-        }
-    }, [set]);
 
     return(
         <View style={styles.container}>
