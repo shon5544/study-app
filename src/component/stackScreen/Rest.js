@@ -2,41 +2,42 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 
-export default ({navigation})=> {
-    const [minute, setMinute] = useState(5);
-    const [sec, setSec] = useState(0);
+export default ({navigation, callback})=> {
+    const [minuteR, setMinuteR] = useState(5);
+    const [secR, setSecR] = useState(0);
 
     const interval = useRef();
 
-    function minMinus(){
-        if(minute > 0){
-            setMinute(minute - 1);
-        } else if (minute === 0) {
-            setMinute(59);
+    function minMinusR(){
+        if(minuteR > 0){
+            setMinuteR(minuteR - 1);
+        } else if (minuteR === 0) {
+            setMinuteR(59);
         }
     }
 
-    function secMinus(){
-        if(sec > 0){
-            setSec((sec)=> sec - 1);
+    function secMinusR(){
+        if(secR > 0){
+            setSecR((secR)=> secR - 1);
             // setCurrent(current + 1);
-        } else if (sec === 0) {
-            minMinus();
-            setSec(59);
-        }   
+        } else if (secR === 0) {
+            minMinusR();
+            setSecR(59);
+        }
     }
 
     useEffect(()=>{
-        interval.current = setInterval(secMinus, 1000);
+        interval.current = setInterval(secMinusR, 1000);
 
-        if(minute <= 0 && sec <= 0){
-            navigation.navigate('메인', {state: true});
+        if(minuteR <= 0 && secR <= 0){
+            // navigation.navigate('메인', {state: true});
+            callback(false);
         }
 
         return ()=>{
             clearInterval(interval.current);
         }
-    }, [sec]);
+    }, [secR]);
 
     return(
         <View style={styles.container}>
@@ -49,17 +50,18 @@ export default ({navigation})=> {
                     shadowColor="#EBEBEB"
                     bgColor="#fff"
                 >
-                    <Text style={[styles.text, {fontSize: 28}]}>{minute < 10 ? '0' + minute : minute}:{sec < 10 ? '0' + sec : sec}</Text>
+                    <Text style={[styles.text, {fontSize: 28}]}>{minuteR < 10 ? '0' + minuteR : minuteR}:{secR < 10 ? '0' + secR : secR}</Text>
                 </ProgressCircle>
             </View>
             
             <TouchableOpacity
                 onPress={()=>{
-                    navigation.navigate('메인', {state: true});
+                    // navigation.navigate('메인', {state: true});
+                    callback(false);
                 }}
                 style={[styles.button, {
                     marginTop: 20,
-                    marginBottom: 30
+                    // marginBottom: 9
                 }]}>
                     <Text style={[styles.text, {fontSize: 18}]}>버킷하기</Text>
             </TouchableOpacity>
@@ -78,7 +80,7 @@ export default ({navigation})=> {
                 alignItems: 'center',
                 padding: 10,
                 borderRadius: 10,
-                marginTop: 30,
+                marginTop: 15,
                 backgroundColor: '#ffffff',
                 flexDirection: 'row'
             }}>
@@ -89,14 +91,14 @@ export default ({navigation})=> {
                         borderRightWidth: 2,
                     }}
                     onPress={()=>{
-                        setMinute((minute)=> minute - 1);
+                        setMinuteR((minuteR)=> minuteR - 1);
                     }}>
                         <Text style={[styles.text, {fontSize: 18}]}>-1</Text>
                 </TouchableOpacity>
                 <Text style={[styles.text, {fontSize: 18, paddingHorizontal: 10}]}>시간</Text>
                 <TouchableOpacity
                     onPress={()=>{
-                        setMinute((minute)=> minute + 1)
+                        setMinuteR((minuteR)=> minuteR + 1)
                     }}
                     style={{
                         paddingHorizontal: 10,
