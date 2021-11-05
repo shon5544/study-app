@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
-import ProgressCircle from 'react-native-progress-circle';
-import Rest from './stackScreen/Rest';
-import Timer from './Timer';
+// import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+// import ProgressCircle from 'react-native-progress-circle';
+import Rest from './FocusChild/Rest';
+import Timer from './FocusChild/Timer';
 
 export default ({navigation, route})=>{
     const [set, setSet] = useState(1);
@@ -14,6 +14,11 @@ export default ({navigation, route})=>{
     const [firstS, setFirstS] = useState(sec);
     const [rest, setRest] = useState(false);
     const [autoStart, setAutoStart] = useState(null);
+    const [total, setTotal] = useState(0);
+
+    function totalHandle(value){
+        setTotal(value);
+    }
 
     function restToParent(data){
         setRest(data);
@@ -55,7 +60,7 @@ export default ({navigation, route})=>{
     return(
         <>
             {!rest ?
-                <Timer 
+                <Timer
                 set={set}
                 start={autoStart} 
                 restHanle={timerToParent} 
@@ -72,6 +77,8 @@ export default ({navigation, route})=>{
                 fstTHandle={fstTHandle}
                 fstMHandle={fstMHandle}
                 fstSHandle={fstSHandle}
+                total={total}
+                setTotal={totalHandle}
                 />
             :
             <Rest callback={restToParent}/>

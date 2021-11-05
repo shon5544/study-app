@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 
-export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle})=>{
+export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal})=>{
     // const [set, setSet] = useState(1);
     const [startState, setStartState] = useState(false);
     const [stopState, setStopState] = useState(false);
@@ -10,13 +10,14 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
     // const [minute, setMinute] = useState(25);
     // const [sec, setSec] = useState(0);
     const [current, setCurrent] = useState(0);
-    const [total, setTotal] = useState(0);
+    
     const [percent, setPercent] = useState(0);
 
     // const [firstT, setFirstT] = useState(time);
     // const [firstM, setFirstM] = useState(minute);
     // const [firstS, setFirstS] = useState(sec);
     const [firstStarted, setFirstStarted] = useState(true);
+    const [cStop, setCStop] = useState(false);
     
     
     // const [loopState, setLoopState] = useState(true);
@@ -91,7 +92,17 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         }
 
         if(!startState){
+            // minus();
             init();
+            // restHanle(true);
+        }
+
+        if(cStop){
+            setCStop(false);
+            minus();
+            init();
+            // setStartState(false);
+            restHanle(true);
         }
 
         //startState가 핵심키
@@ -146,13 +157,13 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                     }}>
                         <TouchableOpacity onPress={()=> minus()} style={{paddingRight: 10, height: '100%', justifyContent:'center'}}>
                             <View>
-                                <Image source={require('../img/down-arrow.png')} style={{width: 23, height: 23}}/>
+                                <Image source={require('../../img/down-arrow.png')} style={{width: 23, height: 23}}/>
                             </View>
                         </TouchableOpacity>
                         <Text style={[styles.text, {fontSize: 24}]}>{set} 세트</Text>
                         <TouchableOpacity onPress={()=> plus()} style={{paddingLeft: 10, height: '100%', justifyContent:'center'}}>
                             <View>
-                                <Image source={require('../img/up-arrow.png')} style={{width: 23, height: 23}}/>
+                                <Image source={require('../../img/up-arrow.png')} style={{width: 23, height: 23}}/>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -256,7 +267,12 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                     }}><Text style={[styles.text, {fontSize: 18, color: '#ffffff'}]}>일시정지</Text></TouchableOpacity>
                     <TouchableOpacity
                     onPress={()=>{
-                        setStartState(!startState);
+                        if(set>1){
+                            setCStop(true);
+                        } else {
+                            setStartState(false);
+                        }
+                        // setStartState(!startState);
                         // setTime(firstT);
                         // setMinute(firstM);
                         // setSec(firstS);
