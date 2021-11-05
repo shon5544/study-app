@@ -8,8 +8,9 @@ export default ({navigation})=>{
     const [tag, setTag] = useState(null);
     const [content, setContent] = useState(null);
     const [noteData, setNoteData] = useState([]);
-    
 
+    // 노트를 쓰고 저장할때 제목, 태그, 내용에 null 값이 들어가는 오류
+    // setNoteData가 바로 작동을 안하는듯 parsedData는 정상 출력되지만 noteData는 결국 초기값 그대로.
     async function getNotes(){
         try{
             await AsyncStorage.getItem('Notes').then((value)=>{
