@@ -10,9 +10,9 @@ export default ({navigation})=>{
     const [noteData, setNoteData] = useState([]);
     
 
-    useEffect(()=>{
+    async function getNotes(){
         try{
-            AsyncStorage.getItem('Notes').then((value)=>{
+            await AsyncStorage.getItem('Notes').then((value)=>{
                 const parsedData = JSON.parse(value);
                 console.log(parsedData);
                 setNoteData(parsedData);
@@ -20,15 +20,21 @@ export default ({navigation})=>{
         } catch(e) {
             console.log(e);
         }
+    }
+
+    useEffect(()=>{
+        getNotes();
     }, []);
 
     useLayoutEffect(()=>{
         navigation.setOptions({
             headerRight: ()=>(
                 <TouchableOpacity onPress={()=>{
+                    console.log(noteData);
                     noteData.push({title, tag, content});
+                    console.log(noteData);
                     AsyncStorage.setItem('Notes', JSON.stringify(noteData));
-                    navigation.navigate('노트');
+                    navigation.replace('메인');
                 }} style={{marginRight: 23}}><Text style={{fontFamily: 'OTWelcomeRA', color: '#4B89DC'}}>완료</Text></TouchableOpacity>
             )
         })
