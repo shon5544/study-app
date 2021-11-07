@@ -15,37 +15,47 @@ export default ({navigation})=>{
         try{
             await AsyncStorage.getItem('Notes').then((value)=>{
                 const parsedData = JSON.parse(value);
-                console.log(parsedData);
-                setNoteData(parsedData);
+                if(parsedData !== null){
+                    console.log(parsedData);
+                    setNoteData(parsedData);
+                }
             })
         } catch(e) {
             console.log(e);
         }
     }
 
-    useEffect(()=>{
-        getNotes();
-    }, []);
+    async function setNotes(){
+        console.log(noteData);
+        noteData.push({title, tag, content});
+        console.log(noteData);
+        await AsyncStorage.setItem('Notes', JSON.stringify(noteData));
+        navigation.replace('메인');
+    }
 
-    useLayoutEffect(()=>{
+    // 이유를 알아낸 것 같다
+    // 버튼 클릭시의 함수는 useLayoutEffect에서 등록됨 -> 버튼 클릭시엔 노트의 정보가 필요. 즉 버튼 함수 등록전에 노트의 정보가 있어야됨
+    // -> 노트 정보를 useEffect에서 가져오니 당연히 노트정보가 제대로 올리가 없음. -> 논리 오류 발생.
+
+    useEffect(()=>{
         navigation.setOptions({
             headerRight: ()=>(
                 <TouchableOpacity onPress={()=>{
-                    console.log(noteData);
-                    noteData.push({title, tag, content});
-                    console.log(noteData);
-                    AsyncStorage.setItem('Notes', JSON.stringify(noteData));
-                    navigation.replace('메인');
+                    setNotes();
                 }} style={{marginRight: 23}}><Text style={{fontFamily: 'OTWelcomeRA', color: '#4B89DC'}}>완료</Text></TouchableOpacity>
             )
-        })
+        });
+    });
+
+    useLayoutEffect(()=>{
+        getNotes();
     }, []);
 
     return(
         <View style={styles.container}>
             <TextInput onChangeText={(value)=>{
                 setTitle(value);
-                console.log(title);
+                // console.log(title);
             }} style={[styles.font, styles.input, {borderColor: '#EBEBEB', borderBottomWidth: 1.9, borderTopWidth: 1.9}]} placeholder="제목"/>
             <TextInput onChangeText={(value)=>{
                 setTag(value);
