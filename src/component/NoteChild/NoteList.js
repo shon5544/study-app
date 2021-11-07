@@ -1,22 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import MasonryList from '@react-native-seoul/masonry-list';
+import NoteBlock from './NoteBlock';
 
 export default ({noteList})=>{
 
-
     return(
         <View style={styles.container}>
-            <ScrollView>
-                <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
-                    {noteList.map((value, index)=>(
-                        <View style={styles.block} key={index}>
-                            <Text style={[styles.text]}>{value.title === null ? '제목 없음': value.title}</Text>
-                            <Text style={[styles.text]}>{value.tag === null ? '제목 없음': value.tag}</Text>
-                            <Text style={[styles.text]}>{value.content === null ? '제목 없음': value.content}</Text>
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
+            <MasonryList
+                style={{alignSelf: 'stretch'}}
+                contentContainerStyle={{
+                    paddingLeft: 10,
+                    alignSelf: 'stretch',
+                }}
+                numColumns={2}
+                data={noteList}
+                renderItem={NoteBlock}
+            />
+            {/* <ScrollView> */}
+                
+                {/* {noteList.map((value, index)=>(
+                    // <View style={styles.block} key={index}>
+                    //     <Text style={[styles.text]}>{value.title === null ? '제목 없음': value.title}</Text>
+                    //     <Text style={[styles.text]}>{value.tag === null ? '제목 없음': value.tag}</Text>
+                    //     <Text style={[styles.text]}>{value.content === null ? '제목 없음': value.content}</Text>
+                    // </View>
+                ))} */}
+            {/* </ScrollView> */}
         </View>
     )
 
@@ -48,8 +58,5 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginBottom: 10,
         width: "50%",
-        flexGrow: 0,
-        flexShrink: 1,
-        flexBasis: 'auto',
-    }
+    },
 });
