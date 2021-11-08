@@ -1,13 +1,16 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default ({navigation})=>{
-    const [title, setTitle] = useState(null);
-    const [tag, setTag] = useState(null);
-    const [content, setContent] = useState(null);
+    const [title, setTitle] = useState("");
+    const [tag, setTag] = useState("");
+    const [content, setContent] = useState("");
     const [noteData, setNoteData] = useState([]);
+    const [tagData, setTagData] = useState([]);
+
+    const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85"];
 
     // 노트를 쓰고 저장할때 제목, 태그, 내용에 null 값이 들어가는 오류
     // setNoteData가 바로 작동을 안하는듯 parsedData는 정상 출력되지만 noteData는 결국 초기값 그대로.
@@ -16,7 +19,7 @@ export default ({navigation})=>{
             await AsyncStorage.getItem('Notes').then((value)=>{
                 const parsedData = JSON.parse(value);
                 if(parsedData !== null){
-                    console.log(parsedData);
+                    // console.log(parsedData);
                     setNoteData(parsedData);
                 }
             })
@@ -25,12 +28,64 @@ export default ({navigation})=>{
         }
     }
 
+    async function getTagData(){
+        try{
+            await AsyncStorage.getItem('Tag').then((value)=>{
+                const parsedData = JSON.parse(value);
+                // console.log(parsedData);
+                if(parsedData !== null && parsedData !== undefined){
+                    // console.log(parsedData);
+                    setTagData(parsedData);
+                }
+            })
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
     async function setNotes(){
-        console.log(noteData);
+        // console.log(noteData);
         noteData.push({title, tag, content});
         console.log(noteData);
         await AsyncStorage.setItem('Notes', JSON.stringify(noteData));
+    }
+    
+    async function pushTag(){
+        console.log(tagData);
+        let index = -1;
+        if(tagData.length > 0){
+            // for(let i = 0; i <= tagData.length; i++){
+            //     if(tagData[i].tag === tag){
+            //         index = i;
+            //         break
+            //     }
+            // }
+            tagData.map((value, index)=>{
+                if(value.tag === tag){
+                    index = index;
+                }
+            })
+        }
+
+        if(index === -1){
+            tagData.push({
+                tag: tag,
+                color: colorList[Math.floor(Math.random() * (colorList.length))]
+            });
+            console.log(tagData);
+        }
+        console.log(tagData);
+        await AsyncStorage.setItem('Tag', JSON.stringify(tagData));
+        init();
         navigation.replace('메인');
+    }
+
+    function init(){
+        setTitle(null);
+        setTag(null);
+        setContent(null);
+        setNoteData(null);
+        setTagData(null);
     }
 
     // 이유를 알아낸 것 같다
@@ -42,17 +97,19 @@ export default ({navigation})=>{
             headerRight: ()=>(
                 <TouchableOpacity onPress={()=>{
                     setNotes();
+                    pushTag();
                 }} style={{marginRight: 23}}><Text style={{fontFamily: 'OTWelcomeRA', color: '#4B89DC'}}>완료</Text></TouchableOpacity>
             )
         });
-    });
+    }, [title, tag, content]);
 
     useLayoutEffect(()=>{
         getNotes();
-    }, []);
+        getTagData();
+    }, [tagData]);
 
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <TextInput onChangeText={(value)=>{
                 setTitle(value);
                 // console.log(title);
@@ -63,7 +120,7 @@ export default ({navigation})=>{
             <TextInput onChangeText={(value)=>{
                 setContent(value);
             }} style={[styles.font, styles.input]} placeholder="공부했던 내용을 간단하게 적으세요!" multiline/>
-        </View>
+        </ScrollView>
     )
 }
 

@@ -1,13 +1,53 @@
-import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default ({item, index})=>{
+export default ({item, navigation})=>{
+    const [index, setIndex] = useState(-1);
+    const [tagList, setTagList] = useState([]);
+    const [color, setColor] = useState('#ebebeb');
+
+    async function getTags(){
+        await AsyncStorage.getItem('Tag').then((value)=>{
+            if(value !== null && value !== undefined){
+                const parsedData = JSON.parse(value);
+                // console.log(parsedData);
+                setTagList(parsedData);
+                // return parsedData;
+            }
+        })
+    }
+
+    useEffect(()=>{
+        // console.log(item);
+        getTags().then(()=>{
+            // console.log(tagList);
+            if(tagList.length > 0){
+                for(let i=0; i <= tagList.length; i++){
+                    if(tagList[i].tag === item.tag){
+                        setColor(tagList[i].color);
+                        break
+                    }
+                }
+            }
+        })
+    },[tagList]);
+
     return(
-        <View style={styles.block} key={index}>
-            <Text style={[styles.text, styles.title]}>{item.title.length > 8 ? item.title.slice(0,8) + '..' : item.title}</Text>
-            <Text style={[styles.text, styles.tag]}>{item.tag}</Text>
-            <Text style={[styles.text]}>{item.content.length > 150 ? item.content.slice(0,150) + '..' : item.content}</Text>
-        </View>
+        <TouchableOpacity style={styles.block} onPress={()=> navigation.navigate('자세히', {
+            title: item.title,
+            tag: item.tag,
+            content: item.content
+        })}>
+            <View>
+                <Text style={[styles.text, styles.title]}>{item.title.length > 8 ? item.title.slice(0,8) + '..' : item.title}</Text>
+                <View style={styles.tag}>
+                    <View style={[styles.dot, {backgroundColor: color}]}></View>
+                    <Text style={[styles.text]}>{item.tag.length > 5? item.tag.slice(0, 3) + '..': item.tag}</Text>
+                </View>
+                <Text style={[styles.text]}>{item.content.length > 150 ? item.content.slice(0,150) + '..' : item.content}</Text>
+            </View>
+        </TouchableOpacity>
     )
 }
 
@@ -29,29 +69,30 @@ const styles = StyleSheet.create({
 
         elevation: 5,
         marginBottom: 10,
-        marginRight: 10
+        marginLeft: 10,
+        width: '89.5%'
     },
     title:{
         fontSize: 20,
         marginBottom: 7
     },
     tag:{
-        padding: 5,
-        borderRadius: 5,
-        backgroundColor: '#ffffff',
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 1,
-        // },
-        // shadowOpacity: 0.20,
-        // shadowRadius: 1.41,
-
-        // elevation: 2,
-        width: 90,
         borderColor: '#ebebeb',
-        borderWidth: 1,
-        textAlign: 'center',
+        borderWidth: 2,
+        alignSelf: 'flex-start',
+        padding: 10,
+        fontSize: 13,
+        borderRadius: 7,
+        paddingRight: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 15
     },
+    dot:{
+        width: 10,
+        height: 10,
+        borderRadius: 20,
+        marginRight: 10,
+        marginLeft: 5,
+    }
 });

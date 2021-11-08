@@ -3,12 +3,13 @@ import { View, StyleSheet } from 'react-native';
 import MasonryList from '@react-native-seoul/masonry-list';
 import NoteBlock from './NoteBlock';
 
-export default ({noteList})=>{
+export default ({noteList, navigation})=>{
 
     return(
         <View style={styles.container}>
-            <MasonryList
+            {/* <MasonryList
                 style={{alignSelf: 'stretch'}}
+                keyExtractor={(item, index) => index.toString()}
                 contentContainerStyle={{
                     paddingLeft: 10,
                     alignSelf: 'stretch',
@@ -16,6 +17,15 @@ export default ({noteList})=>{
                 numColumns={2}
                 data={noteList}
                 renderItem={NoteBlock}
+            /> */}
+            <MasonryList
+            numColumns={2}
+            renderItem={({item}) => <NoteBlock item={item} navigation={navigation}/>}
+            onEndReachedThreshold={0.1}
+            // keyPrefix={"block"}
+            data={noteList.reverse()}
+            keyExtractor={(item, index) => index.toString()}
+            style={{alignSelf: 'stretch'}}
             />
             {/* <ScrollView> */}
                 
@@ -38,7 +48,8 @@ export default ({noteList})=>{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        alignItems: 'center'
     },
     text: {
         fontFamily: 'OTWelcomeRA'

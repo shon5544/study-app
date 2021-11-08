@@ -4,8 +4,9 @@ import { TouchableOpacity } from 'react-native';
 import { View, Text } from 'react-native';
 import NoteList from './NoteChild/NoteList';
 
-export default ()=>{
+export default ({navigation})=>{
     const [noteList, setNoteList] = useState([]);
+    
 
     async function getNotes(){
         await AsyncStorage.getItem('Notes').then((value)=> {
@@ -16,17 +17,22 @@ export default ()=>{
         });
     }
 
+    
+
     async function removeNote(){
         await AsyncStorage.removeItem('Notes');
+        await AsyncStorage.removeItem('Tag');
         setNoteList([]);
+        // setTagList([]);
     }
 
     useEffect(()=>{
         getNotes();
+        // getTags();
     }, []);
     return(
         <>
-            <NoteList noteList={noteList}/>
+            <NoteList noteList={noteList} navigation={navigation}/>
             <TouchableOpacity onPress={()=>removeNote()}><Text>지우기</Text></TouchableOpacity>
         </>
     )
