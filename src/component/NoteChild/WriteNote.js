@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default ({navigation})=>{
+export default ({navigation}) => {
     const [title, setTitle] = useState("");
     const [tag, setTag] = useState("");
     const [content, setContent] = useState("");
@@ -12,7 +12,7 @@ export default ({navigation})=>{
 
     const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85"];
 
-    // 노트를 쓰고 저장할때 제목, 태그, 내용에 null 값이 들어가는 오류
+    // 노트를 쓰고 저장할때 제목, 태그, 내용에 null 값이 들어가는 오류.
     // setNoteData가 바로 작동을 안하는듯 parsedData는 정상 출력되지만 noteData는 결국 초기값 그대로.
     async function getNotes(){
         try{
@@ -113,7 +113,7 @@ export default ({navigation})=>{
             <TextInput onChangeText={(value)=>{
                 setTitle(value);
                 // console.log(title);
-            }} style={[styles.font, styles.input, {borderColor: '#EBEBEB', borderBottomWidth: 1.9, borderTopWidth: 1.9}]} placeholder="제목"/>
+            }} style={[styles.font, styles.input, {borderColor: '#EBEBEB', borderBottomWidth: 1.9, borderTopWidth: 1.9}]} placeholder="제목" />
             <TextInput onChangeText={(value)=>{
                 setTag(value);
             }} style={[styles.font, styles.input, {borderColor: '#EBEBEB', borderBottomWidth: 1.9}]} placeholder="과목/카테고리"/>

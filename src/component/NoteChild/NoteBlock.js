@@ -37,7 +37,8 @@ export default ({item, navigation})=>{
         <TouchableOpacity style={styles.block} onPress={()=> navigation.navigate('자세히', {
             title: item.title,
             tag: item.tag,
-            content: item.content
+            content: item.content,
+            tagColor: color
         })}>
             <View>
                 <Text style={[styles.text, styles.title]}>{item.title.length > 8 ? item.title.slice(0,8) + '..' : item.title}</Text>

@@ -19,12 +19,12 @@ export default ({navigation})=>{
 
     
 
-    async function removeNote(){
-        await AsyncStorage.removeItem('Notes');
-        await AsyncStorage.removeItem('Tag');
-        setNoteList([]);
-        // setTagList([]);
-    }
+    // async function removeNote(){
+    //     await AsyncStorage.removeItem('Notes');
+    //     await AsyncStorage.removeItem('Tag');
+    //     setNoteList([]);
+    //     // setTagList([]);
+    // }
 
     useEffect(()=>{
         getNotes();
@@ -33,7 +33,7 @@ export default ({navigation})=>{
     return(
         <>
             <NoteList noteList={noteList} navigation={navigation}/>
-            <TouchableOpacity onPress={()=>removeNote()}><Text>지우기</Text></TouchableOpacity>
+            {/* <TouchableOpacity onPress={()=>removeNote()}><Text>지우기</Text></TouchableOpacity> */}
         </>
     )
 }

@@ -1,7 +1,38 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { EvilIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default ({route}) => {
+export default ({route, navigation}) => {
+    const [notes, setNotes] = useState([]);
+
+    async function getNotes(){
+        await AsyncStorage.getItem('Notes').then((value)=>{
+            const data = JSON.parse(value);
+            setNotes(data);
+        });
+    }
+
+    async function delNote(){
+        const index = notes.findIndex((obj)=>obj.content === route.params.content && obj.title === route.params.title);
+        notes.splice(index, 1);
+        await AsyncStorage.setItem('Notes', JSON.stringify(notes));
+        navigation.replace('메인');
+    }
+
+    useEffect(()=>{
+        getNotes();
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity 
+                onPress={()=> delNote()}
+                style={{marginRight: 22}}>
+                    <EvilIcons name="trash" size={35} color="black" />
+                </TouchableOpacity>
+            )
+        })
+    }, [notes]);
+
     return(
         <View style={styles.container}>
             <View style={styles.box}>
@@ -9,7 +40,7 @@ export default ({route}) => {
                     <Text style={[styles.font, styles.title]}>{route.params.title}</Text>
                 </View>
                 <View style={styles.tag}>
-                    <View style={styles.dot}></View>
+                    <View style={[styles.dot, {backgroundColor: route.params.tagColor}]}></View>
                     <Text style={[styles.font]}>{route.params.tag}</Text>
                 </View>
                 <View>
@@ -63,7 +94,7 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     dot:{
-        backgroundColor: 'red',
+        // backgroundColor: 'red',
         width: 10,
         height: 10,
         borderRadius: 20,
