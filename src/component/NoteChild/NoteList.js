@@ -27,6 +27,9 @@ export default ({noteList, tagList ,navigation})=>{
             data={noteList.reverse()}
             keyExtractor={(item, index) => index.toString()}
             style={{alignSelf: 'stretch'}}
+            contentContainerStyle={{
+                paddingTop: 15
+            }}
             />
             {/* <ScrollView> */}
                 
@@ -50,7 +53,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        alignItems: 'center'
+        alignItems: 'center',
+        // paddingTop: 10
     },
     text: {
         fontFamily: 'OTWelcomeRA'

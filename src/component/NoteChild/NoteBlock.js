@@ -1,6 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({item, tagList, navigation})=>{
     const [color, setColor] = useState('#ebebeb');

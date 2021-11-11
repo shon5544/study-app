@@ -198,15 +198,15 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                         borderRadius: 10,
                         marginTop: 30
                         }}>
-                        <TextInput placeholder="시간" keyboardType='numeric' onChangeText={(value)=> {
+                        <TextInput style={styles.text} placeholder="시간" keyboardType='numeric' onChangeText={(value)=> {
                             timeHandle(parseInt(value));
                             fstTHandle(parseInt(value));
                         }} style={{paddingRight: 7, borderColor: '#EBEBEB', borderRightWidth: 2, textAlign:"center",  paddingLeft: 3}}/>
-                        <TextInput placeholder="분" keyboardType='numeric' onChangeText={(value)=> {
+                        <TextInput style={styles.text} placeholder="분" keyboardType='numeric' onChangeText={(value)=> {
                             minHandle(parseInt(value));
                             fstMHandle(parseInt(value));
                         }} style={{paddingRight: 3, borderColor: '#EBEBEB', borderRightWidth: 2, paddingLeft: 10}}/>
-                        <TextInput placeholder="초" keyboardType="numeric" onChangeText={(value)=> {
+                        <TextInput style={styles.text} placeholder="초" keyboardType="numeric" onChangeText={(value)=> {
                             secHandle(parseInt(value));
                             fstSHandle(parseInt(value));
                         }} style={{paddingLeft: 10}}/>

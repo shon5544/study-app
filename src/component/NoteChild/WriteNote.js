@@ -10,6 +10,7 @@ export default ({navigation}) => {
     const [noteData, setNoteData] = useState([]);
     const [tagData, setTagData] = useState([]);
     const [id, setId] = useState(0);
+    const [lastId, setLastId] = useState(0);
 
     const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85"];
 
@@ -46,9 +47,6 @@ export default ({navigation}) => {
 
     async function setNotes(){
         console.log(noteData);
-        if(noteData.length > 0){
-            setId(noteData[noteData.length - 1].id + 1);
-        }
         noteData.push({title, tag, content, id});
         // console.log(noteData);
         await AsyncStorage.setItem('Notes', JSON.stringify(noteData));
@@ -90,6 +88,7 @@ export default ({navigation}) => {
         setContent("");
         setNoteData([]);
         setTagData([]);
+        setId(0);
     }
 
     // 이유를 알아낸 것 같다
@@ -107,19 +106,36 @@ export default ({navigation}) => {
         });
     }, [title, tag, content]);
 
+    function setttingId(){
+        if(noteData.length > 0){
+            setId(lastId + 1);
+        }
+    }
+
+    function getLastId(){
+        // console.log(noteData);
+        if(noteData.length > 0){
+            const lastId = noteData[noteData.length - 1].id;
+            // console.log(lastId);
+            setLastId(lastId);
+        }
+    }
 
     useLayoutEffect(()=>{
         getNotes();
         getTagData();
-    }, [tagData]);
-
+    }, []);
+    
     useEffect(()=>{
         return () =>{
-           init(); 
+            init(); 
         }
     }, []);
-
-
+    
+    useEffect(()=>{
+        getLastId();
+        setttingId();
+    }, [noteData, id]);
 
     return(
         <ScrollView style={styles.container}>
