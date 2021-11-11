@@ -2,21 +2,11 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default ({item, navigation})=>{
-    const [index, setIndex] = useState(-1);
-    const [tagList, setTagList] = useState([]);
+export default ({item, tagList, navigation})=>{
     const [color, setColor] = useState('#ebebeb');
 
-    async function getTags(){
-        await AsyncStorage.getItem('Tag').then((value)=>{
-            if(value !== null && value !== undefined){
-                const parsedData = JSON.parse(value);
-                // console.log(parsedData);
-                setTagList(parsedData);
-                // return parsedData;
-            }
-        })
-
+    useEffect(()=>{
+        // console.log(tagList);
         if(tagList.length > 0){
             for(let i=0; i <= tagList.length; i++){
                 if(tagList[i].tag === item.tag){
@@ -25,19 +15,10 @@ export default ({item, navigation})=>{
                 }
             }
         }
-    }
-
-    useEffect(()=>{
-        // console.log(item);
-        // getTags().then(()=>{
-        //     // console.log(tagList);
-            
-        // })
-        getTags();
-    },[tagList]);
-
+    }, []);
+    
     return(
-        <TouchableOpacity  key={item.title} style={styles.block} onPress={()=> navigation.navigate('자세히', {
+        <TouchableOpacity style={styles.block} onPress={()=> navigation.navigate('자세히', {
             title: item.title,
             tag: item.tag,
             content: item.content,

@@ -9,6 +9,7 @@ export default ({navigation}) => {
     const [content, setContent] = useState("");
     const [noteData, setNoteData] = useState([]);
     const [tagData, setTagData] = useState([]);
+    const [id, setId] = useState(0);
 
     const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85"];
 
@@ -44,14 +45,17 @@ export default ({navigation}) => {
     }
 
     async function setNotes(){
-        // console.log(noteData);
-        noteData.push({title, tag, content});
         console.log(noteData);
+        if(noteData.length > 0){
+            setId(noteData[noteData.length - 1].id + 1);
+        }
+        noteData.push({title, tag, content, id});
+        // console.log(noteData);
         await AsyncStorage.setItem('Notes', JSON.stringify(noteData));
     }
     
     async function pushTag(){
-        console.log(tagData);
+        // console.log(tagData);
         let index = -1;
         if(tagData.length > 0){
             // for(let i = 0; i <= tagData.length; i++){
@@ -72,9 +76,9 @@ export default ({navigation}) => {
                 tag: tag,
                 color: colorList[Math.floor(Math.random() * (colorList.length))]
             });
-            console.log(tagData);
+            // console.log(tagData);
         }
-        console.log(tagData);
+        // console.log(tagData);
         await AsyncStorage.setItem('Tag', JSON.stringify(tagData));
         // init();
         navigation.replace('메인');

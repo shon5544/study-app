@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import MasonryList from '@react-native-seoul/masonry-list';
 import NoteBlock from './NoteBlock';
 
-export default ({noteList, navigation})=>{
+export default ({noteList, tagList ,navigation})=>{
 
     return(
         <View style={styles.container}>
@@ -20,9 +20,10 @@ export default ({noteList, navigation})=>{
             /> */}
             <MasonryList
             numColumns={2}
-            renderItem={({item}) => <NoteBlock item={item} navigation={navigation}/>}
+            renderItem={({item}) => <NoteBlock key={item.id} item={item} tagList={tagList} navigation={navigation}/>}
             onEndReachedThreshold={0.1}
-            // keyPrefix={"block"}
+            keyPrefix={"0"}
+            // keyExtractor={(item, index)=> console.log(index)}
             data={noteList.reverse()}
             keyExtractor={(item, index) => index.toString()}
             style={{alignSelf: 'stretch'}}
