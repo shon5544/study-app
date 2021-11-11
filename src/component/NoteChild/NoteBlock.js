@@ -16,25 +16,28 @@ export default ({item, navigation})=>{
                 // return parsedData;
             }
         })
+
+        if(tagList.length > 0){
+            for(let i=0; i <= tagList.length; i++){
+                if(tagList[i].tag === item.tag){
+                    setColor(tagList[i].color);
+                    break
+                }
+            }
+        }
     }
 
     useEffect(()=>{
         // console.log(item);
-        getTags().then(()=>{
-            // console.log(tagList);
-            if(tagList.length > 0){
-                for(let i=0; i <= tagList.length; i++){
-                    if(tagList[i].tag === item.tag){
-                        setColor(tagList[i].color);
-                        break
-                    }
-                }
-            }
-        })
+        // getTags().then(()=>{
+        //     // console.log(tagList);
+            
+        // })
+        getTags();
     },[tagList]);
 
     return(
-        <TouchableOpacity style={styles.block} onPress={()=> navigation.navigate('자세히', {
+        <TouchableOpacity  key={item.title} style={styles.block} onPress={()=> navigation.navigate('자세히', {
             title: item.title,
             tag: item.tag,
             content: item.content,

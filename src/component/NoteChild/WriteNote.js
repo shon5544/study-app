@@ -76,16 +76,16 @@ export default ({navigation}) => {
         }
         console.log(tagData);
         await AsyncStorage.setItem('Tag', JSON.stringify(tagData));
-        init();
+        // init();
         navigation.replace('메인');
     }
 
     function init(){
-        setTitle(null);
-        setTag(null);
-        setContent(null);
-        setNoteData(null);
-        setTagData(null);
+        setTitle("");
+        setTag("");
+        setContent("");
+        setNoteData([]);
+        setTagData([]);
     }
 
     // 이유를 알아낸 것 같다
@@ -103,10 +103,19 @@ export default ({navigation}) => {
         });
     }, [title, tag, content]);
 
+
     useLayoutEffect(()=>{
         getNotes();
         getTagData();
     }, [tagData]);
+
+    useEffect(()=>{
+        return () =>{
+           init(); 
+        }
+    }, []);
+
+
 
     return(
         <ScrollView style={styles.container}>

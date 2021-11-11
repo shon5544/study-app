@@ -33,6 +33,12 @@ export default ({route, navigation}) => {
         })
     }, [notes]);
 
+    useEffect(()=>{
+        return ()=>{
+            setNotes([]);
+        }
+    }, []);
+
     return(
         <View style={styles.container}>
             <View style={styles.box}>
