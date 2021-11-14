@@ -5,6 +5,7 @@ import * as Font from 'expo-font';
 import Tabs from './Tabs';
 import WriteNote from '../component/NoteChild/WriteNote';
 import NoteDetail from '../component/NoteChild/NoteDetail';
+import TodoWrite from '../component/TodoChild/TodoWrite';
 
 
 const Stack = createStackNavigator()
@@ -40,6 +41,12 @@ export default ()=>{
                             fontFamily: 'OTWelcomeRA'
                         }
                     }} name="자세히" component={NoteDetail}/>
+                    <Stack.Screen options={{
+                        headerShown: true,
+                        headerTitleStyle:{
+                            fontFamily: 'OTWelcomeRA'
+                        }
+                    }} name="할 일 작성" component={TodoWrite}/>
                 </Stack.Navigator>
              : <View></View>}
         </>

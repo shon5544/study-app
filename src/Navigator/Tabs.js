@@ -61,7 +61,18 @@ export default ({navigation})=>{
                             </TouchableOpacity>
                         )
                     }} name="노트" component={Note}/>
-            <Tab.Screen name="할 일" component={Todo}/>
+            <Tab.Screen 
+            options={{
+                headerRight: () => (
+                    <TouchableOpacity 
+                    onPress={()=>{
+                        navigation.navigate('할 일 작성');
+                    }}
+                    style={{marginRight: 20}}>
+                        <MaterialCommunityIcons name="pencil" size={24} color="black" />
+                    </TouchableOpacity>
+                )
+            }} name="할 일" component={Todo}/>
             <Tab.Screen name="일정" component={Schedule}/>
         </Tab.Navigator>
     )
