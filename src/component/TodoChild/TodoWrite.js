@@ -4,40 +4,64 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-nativ
 
 export default ({navigation}) => {
     const [todo, setTodo] = useState('');
+    // const [year, setYear] = useState(0);
     const [month, setMonth] = useState(0);
     const [day, setDay] = useState(0);
     const [time, setTime] = useState(0);
     const [minute, setMinute] = useState(0);
+    const [allTodo, setAllTodo] = useState({});
 
+
+    // 현재 날짜 가져오기 & 할 일 리스트 가져오기
     useLayoutEffect(()=>{
         const date = new Date();
+        // setYear(date.getFullYear());
         setMonth(date.getMonth() + 1);
         setDay(date.getDate());
         setTime(date.getHours());
         setMinute(date.getMinutes());
-        // console.log(date.getMonth() + 1);
+        getTodo();
     }, []);
 
+    // 클리어 함수
     useEffect(()=>{
         return ()=>{
-            setTodo('');
-            setMonth(0);
-            setDay(0);
-            setTime(0);
-            setMinute(0);
+            init();
         }
     },[]);
 
+    // 완료 버튼 세팅
     useEffect(()=>{
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity style={{marginRight: 20}}>
+                <TouchableOpacity onPress={()=>addTodo()} style={{marginRight: 20}}>
                     <Text style={{fontFamily: 'OTWelcomeRA', color: '#4285F4'}}>완료</Text>
                 </TouchableOpacity>
             )
         });
     }, []);
 
+    // 이전까지의 할 일 리스트 가져오기
+    const getTodo = async () => {
+        await AsyncStorage.getItem('Todo').then((value)=> {
+            const parsedData = JSON.parse(value);
+
+            if(parsedData !== null && parsedData !== undefined){
+                setAllTodo(parsedData);
+            }
+        });
+    }
+
+    const init = () => {
+        setTodo('');
+        // setYear(0);
+        setMonth(0);
+        setDay(0);
+        setTime(0);
+        setMinute(0);
+    }
+
+    // 할 일 추가하기. 완료 버튼에 바인딩 됨.
     async function addTodo(){
         let year;
 
@@ -45,27 +69,31 @@ export default ({navigation}) => {
 
         const nowMonth = date.getMonth() + 1;
         const nowDay = date.getDate();
-        const nowTime = date.getTime();
+        const nowHour = date.getHours();
         const nowMinute = date.getMinutes();
 
-        if(month < nowMonth || day < nowDay || time < nowTime || minute < nowMinute){
+        // 만약에 새로 적은 날짜들이 현재 날짜보다 적은 모순적인 상황이라면, 내년에 할 일로 간주하고 year에 1추가
+        if(month < nowMonth || day < nowDay || time < nowHour || minute < nowMinute){
             year = date.getFullYear() + 1;
         } else {
             year = date.getFullYear();
         }
 
-        const todoData = {
-            todo,
-            month,
-            day,
-            time,
-            minute,
-            year
-        }
-        await AsyncStorage.setItem('Todo', JSON.stringify(todoData)).then(()=>{
+        // Agenda에 사용될 키
+        const key = `${year}-${month}-${day}`;
+
+        let copiedAllTodo = allTodo;
+        copiedAllTodo[key] = todo;
+        console.log(copiedAllTodo);
+
+        await AsyncStorage.setItem('Todo', JSON.stringify(copiedAllTodo)).then(()=>{
             console.log('저장됨');
         });
     }
+
+    useEffect(()=>{
+        console.log(allTodo);
+    }, [allTodo]);
 
     return(
         <View style={styles.container}>

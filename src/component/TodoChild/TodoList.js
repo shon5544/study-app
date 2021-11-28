@@ -18,8 +18,8 @@ LocaleConfig.locales['fr'] = {
 LocaleConfig.defaultLocale = 'fr';
 
 export default ({data, date}) =>{
-    const [week, setWeek] = useState([]);
-    const [nowDate, setNowDate] = useState(date);
+    // const [week, setWeek] = useState([]);
+    // const [nowDate, setNowDate] = useState(date);
     const [items, setItems] = useState({});
 
     const getWeekDays = (date) => {
@@ -65,10 +65,8 @@ export default ({data, date}) =>{
     }
 
     useEffect(()=>{
-        const weekDays = getWeekDays(date);
-        setWeek(weekDays);
         
-    }, [date]);
+    }, []);
 
     return(
         <View style={{flex:1}}>
