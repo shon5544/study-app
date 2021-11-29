@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
-import { useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+// import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
+// import { useEffect } from 'react';
 import { Agenda, LocaleConfig } from 'react-native-calendars';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const timeToString = (time) => {
     const date = new Date(time);
@@ -21,22 +22,47 @@ export default ({data, date}) =>{
     // const [week, setWeek] = useState([]);
     // const [nowDate, setNowDate] = useState(date);
     const [items, setItems] = useState({});
+    const [todo, setTodo] = useState({});
+    const [isLoading, SetIsLoading] = useState(true);
 
-    const getWeekDays = (date) => {
-        const start = startOfWeek(date, { weekStartsOn: 1 });
-        const weekOfLength = 7;
-        const result = [];
-        for(let i = 0; i < weekOfLength; i++){
-            const date = addDays(start, i);
-            result.push({
-                formatted: format(date, 'EEE'),
-                date,
-                day: getDate(date)
-            });
-        }
+    // const getWeekDays = (date) => {
+    //     const start = startOfWeek(date, { weekStartsOn: 1 });
+    //     const weekOfLength = 7;
+    //     const result = [];
+    //     for(let i = 0; i < weekOfLength; i++){
+    //         const date = addDays(start, i);
+    //         result.push({
+    //             formatted: format(date, 'EEE'),
+    //             date,
+    //             day: getDate(date)
+    //         });
+    //     }
 
-        return result;
+    //     return result;
+    // }
+
+    // 할 일 목록 가져오기
+    useLayoutEffect(()=>{
+        getTodo();
+    }, []);
+
+
+    const getTodo = async () => {
+        await AsyncStorage.getItem('Todo').then((value)=>{
+            const parsedData = JSON.parse(value);
+
+            if(parsedData !== null && parsedData !== undefined){
+                setTodo(parsedData);
+            }
+        })
     }
+
+    // 로딩 상태 변경
+    useEffect(()=>{
+        if(todo !== {}){
+            SetIsLoading(false);
+        }
+    }, [todo]);
 
     
 
@@ -65,8 +91,18 @@ export default ({data, date}) =>{
     }
 
     useEffect(()=>{
-        
+        console.log(todo);
     }, []);
+
+    const renderItem = (item) => {
+        return(
+            <TouchableOpacity style={styles.contentContainer}>
+                <View>
+                    <Text style={styles.font}>{item.name}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     return(
         <View style={{flex:1}}>
@@ -99,25 +135,30 @@ export default ({data, date}) =>{
                     </View>
                 )
             })} */}
-            <Agenda
-            items={items}
-            loadItemsForMonth={loadItems}
-            selected={date}
-            showClosingKnob={true}
-            theme={{
-                selectedDayBackgroundColor: '#4285F4',
-                dotColor: '#4285F4',
-                textDayFontFamily: 'OTWelcomeRA',
-                textMonthFontFamily: 'OTWelcomeRA',
-                textDayHeaderFontFamily: 'OTWelcomeRA',
-                textDayStyle:{
-                    paddingRight: 1
-                },
-                todayTextColor: '#4285F4',
-                agendaTodayColor: '#4285F4'
-            }}
-            />
-        </View>
+            {isLoading ?
+            <ActivityIndicator size="large" />
+            :
+                <Agenda
+                items={todo}
+                loadItemsForMonth={loadItems}
+                selected={date}
+                showClosingKnob={true}
+                renderItem={renderItem}
+                theme={{
+                    selectedDayBackgroundColor: '#4285F4',
+                    dotColor: '#4285F4',
+                    textDayFontFamily: 'OTWelcomeRA',
+                    textMonthFontFamily: 'OTWelcomeRA',
+                    textDayHeaderFontFamily: 'OTWelcomeRA',
+                    textDayStyle:{
+                        paddingRight: 1
+                    },
+                    todayTextColor: '#4285F4',
+                    agendaTodayColor: '#4285F4'
+                }}
+                />
+            }
+            </View>
     )
 }
 
@@ -133,7 +174,8 @@ const styles = StyleSheet.create({
 
         elevation: 3,
         backgroundColor: '#ffffff',
-        marginBottom: 20,
+        marginTop: 20,
+        marginBottom: 10,
         padding: 20,
         borderRadius: 8,
         width: '90%',

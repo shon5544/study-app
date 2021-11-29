@@ -10,36 +10,55 @@ export default ({navigation}) => {
     const [time, setTime] = useState(0);
     const [minute, setMinute] = useState(0);
     const [allTodo, setAllTodo] = useState({});
+    const [date, setDate] = useState(new Date());
 
 
     // 현재 날짜 가져오기 & 할 일 리스트 가져오기
     useLayoutEffect(()=>{
-        const date = new Date();
+        // const date = new Date();
         // setYear(date.getFullYear());
         setMonth(date.getMonth() + 1);
         setDay(date.getDate());
         setTime(date.getHours());
         setMinute(date.getMinutes());
         getTodo();
+
+        
     }, []);
 
     // 클리어 함수
-    useEffect(()=>{
-        return ()=>{
-            init();
-        }
-    },[]);
+    // useEffect(()=>{
+    //     return ()=>{
+    //         init();
+    //     }
+    // },[]);
 
     // 완료 버튼 세팅
     useEffect(()=>{
         navigation.setOptions({
             headerRight: () => (
+                <>
                 <TouchableOpacity onPress={()=>addTodo()} style={{marginRight: 20}}>
                     <Text style={{fontFamily: 'OTWelcomeRA', color: '#4285F4'}}>완료</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={()=>delItems()} style={{marginRight: 20}}>
+                    <Text style={{fontFamily: 'OTWelcomeRA', color: '#4285F4'}}>삭제</Text>
+                </TouchableOpacity>
+                </>
             )
         });
-    }, []);
+
+        // // 클리어 함수
+        // return ()=>{
+        //     init();
+        // }
+    }, [month, day, time, minute, todo]);
+
+    const delItems = async () => {
+        await AsyncStorage.removeItem('Todo').then(()=>{
+            navigation.navigate('메인');
+        });
+    }
 
     // 이전까지의 할 일 리스트 가져오기
     const getTodo = async () => {
@@ -65,7 +84,7 @@ export default ({navigation}) => {
     async function addTodo(){
         let year;
 
-        const date = new Date();
+        // const date = new Date();
 
         const nowMonth = date.getMonth() + 1;
         const nowDay = date.getDate();
@@ -73,21 +92,22 @@ export default ({navigation}) => {
         const nowMinute = date.getMinutes();
 
         // 만약에 새로 적은 날짜들이 현재 날짜보다 적은 모순적인 상황이라면, 내년에 할 일로 간주하고 year에 1추가
-        if(month < nowMonth || day < nowDay || time < nowHour || minute < nowMinute){
+        if(month < nowMonth){
             year = date.getFullYear() + 1;
         } else {
             year = date.getFullYear();
         }
 
         // Agenda에 사용될 키
-        const key = `${year}-${month}-${day}`;
+        const key = `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`;
 
         let copiedAllTodo = allTodo;
-        copiedAllTodo[key] = todo;
+        copiedAllTodo[key] = [{name: todo}];
         console.log(copiedAllTodo);
 
         await AsyncStorage.setItem('Todo', JSON.stringify(copiedAllTodo)).then(()=>{
             console.log('저장됨');
+            navigation.replace('메인');
         });
     }
 
@@ -101,25 +121,25 @@ export default ({navigation}) => {
                 <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
                     <TextInput onChangeText={(value)=>{
                         setMonth(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${month}`} keyboardType="numeric"/>
+                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getMonth()+1}`} keyboardType="numeric"/>
                     <Text style={styles.font}>월</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
                     <TextInput onChangeText={(value)=>{
                         setDay(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${day}`} keyboardType="numeric"/>
+                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getDate()}`} keyboardType="numeric"/>
                     <Text style={styles.font}>일</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
                     <TextInput onChangeText={(value)=>{
                         setTime(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${time}`} keyboardType="numeric"/>
+                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getHours()}`} keyboardType="numeric"/>
                     <Text style={styles.font}>시</Text>
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
                     <TextInput onChangeText={(value)=>{
                         setMinute(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${minute}`} keyboardType="numeric"/>
+                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getMinutes()}`} keyboardType="numeric"/>
                     <Text style={styles.font}>분</Text>
                 </View>
             </View>
