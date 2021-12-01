@@ -12,7 +12,7 @@ export default ({navigation}) => {
     const [id, setId] = useState(0);
     const [lastId, setLastId] = useState(0);
 
-    const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85"];
+    const colorList = ["#ff2424", "#3399FF", "#85ffa9", "#ffbc85", "#ffe4e1", "#6ccad0", "#ffcb6b", "ff66cc", "#66cc99"];
 
     // 노트를 쓰고 저장할때 제목, 태그, 내용에 null 값이 들어가는 오류.
     // setNoteData가 바로 작동을 안하는듯 parsedData는 정상 출력되지만 noteData는 결국 초기값 그대로.

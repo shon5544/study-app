@@ -3,21 +3,18 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'reac
 import ProgressCircle from 'react-native-progress-circle';
 
 export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal})=>{
-    // const [set, setSet] = useState(1);
+
     const [startState, setStartState] = useState(false);
     const [stopState, setStopState] = useState(false);
-    // const [time, setTime] = useState(0);
-    // const [minute, setMinute] = useState(25);
-    // const [sec, setSec] = useState(0);
+
     const [current, setCurrent] = useState(0);
     
     const [percent, setPercent] = useState(0);
 
-    // const [firstT, setFirstT] = useState(time);
-    // const [firstM, setFirstM] = useState(minute);
-    // const [firstS, setFirstS] = useState(sec);
     const [firstStarted, setFirstStarted] = useState(true);
     const [cStop, setCStop] = useState(false);
+
+    const [circleWidth, setCircleWidth] = useState(0);
     
     
     // const [loopState, setLoopState] = useState(true);
@@ -83,6 +80,11 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         setCurrent(0);
         setPercent(0);
     }
+
+    const onLayout = (event) => {
+        const {height} = event.nativeEvent.layout;
+        setCircleWidth(height);
+    }
     
     useEffect(()=>{
         if(startState && !stopState){
@@ -132,6 +134,10 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
     useEffect(()=>{
         setStartState(start);
     }, [start]);
+
+    useEffect(()=>{
+        console.log(circleWidth);
+    }, [circleWidth]);
     
 
     return(
@@ -167,10 +173,10 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.timerContainer}>
+                    <View onLayout={onLayout} style={styles.timerContainer}>
                         <ProgressCircle
                             percent={percent}
-                            radius={90}
+                            radius={circleWidth / 2.12}
                             borderWidth={8}
                             color="#3399FF"
                             shadowColor="#EBEBEB"
@@ -323,13 +329,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 1,
         elevation: 5,
-        width: 200,
-        height: 200,
-        borderRadius: 100,
+        width: '60%',
+        aspectRatio: 1,
+        borderRadius: 200,
         backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20
+        marginTop: '7%',
+        marginBottom: '3%'
     },
     text:{
         fontFamily: 'OTWelcomeRA'

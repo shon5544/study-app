@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-// import { addDays, format, getDate, isSameDay, startOfWeek } from 'date-fns';
-// import { useEffect } from 'react';
+import { AntDesign } from '@expo/vector-icons';
 import { Agenda, LocaleConfig } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -18,35 +17,17 @@ LocaleConfig.locales['fr'] = {
 }
 LocaleConfig.defaultLocale = 'fr';
 
-export default ({data, date}) =>{
-    // const [week, setWeek] = useState([]);
-    // const [nowDate, setNowDate] = useState(date);
+export default ({date}) =>{
     const [items, setItems] = useState({});
     const [todo, setTodo] = useState({});
     const [isLoading, SetIsLoading] = useState(true);
 
-    // const getWeekDays = (date) => {
-    //     const start = startOfWeek(date, { weekStartsOn: 1 });
-    //     const weekOfLength = 7;
-    //     const result = [];
-    //     for(let i = 0; i < weekOfLength; i++){
-    //         const date = addDays(start, i);
-    //         result.push({
-    //             formatted: format(date, 'EEE'),
-    //             date,
-    //             day: getDate(date)
-    //         });
-    //     }
-
-    //     return result;
-    // }
-
-    // 할 일 목록 가져오기
+    // 렌더링 전, 할 일 목록 가져오도록 하기
     useLayoutEffect(()=>{
         getTodo();
     }, []);
 
-
+    // 할 일 목록 가져오기
     const getTodo = async () => {
         await AsyncStorage.getItem('Todo').then((value)=>{
             const parsedData = JSON.parse(value);
@@ -57,15 +38,14 @@ export default ({data, date}) =>{
         })
     }
 
-    // 로딩 상태 변경
+    // 할 일 목록 가져오는데 성공했을시, 로딩 상태 변경
     useEffect(()=>{
         if(todo !== {}){
             SetIsLoading(false);
         }
     }, [todo]);
 
-    
-
+    // Agneda에 넣는 함수. 그냥 베껴온거라 정확히 뭘하는지는 잘 모르겠다.
     const loadItems = (day) => {
         setTimeout(() => {
           for (let i = -15; i < 85; i++) {
@@ -90,51 +70,66 @@ export default ({data, date}) =>{
         }, 1000);
     }
 
-    useEffect(()=>{
-        console.log(todo);
-    }, []);
+    // 체크 박스를 눌렀을 때 isDone을 반대로 바꾸고 저장하는 함수
+    const pressCheck = async (item) => {
+        await AsyncStorage.getItem('Todo').then((value)=>{
+            let parsedData = JSON.parse(value);
+            
+            if(parsedData !== undefined){
+                const itemsKey = Object.keys(item);
+                const itemsName = item.name;
+                console.log(parsedData);
+                // itemsName이 잘못됐다. 오브젝트의 키면 날짜가 올줄 알았는데 내부 오브젝트의 키인 name과 time이 온다. 다른 해결책 강구
 
+                // console.log(item);
+                // const itemInParsedData = parsedData[itemsKey];
+
+                // for(let i = 0; i < itemInParsedData.length; i++){
+                //     let element = itemInParsedData[i];
+
+                //     if(element.name == itemsName){
+                //         element.isDone = !element.isDone;
+                //         parsedData[itemsKey] = element
+                //     }
+                // }
+
+                // saveItem(parsedData);
+            }
+            
+        });
+    }
+
+    // 저장하는 함수. await를 한번에 두번써도 되는지 몰라서 분리함.
+    const saveItem = async (parsedData) => {
+        const stringifyData = JSON.stringify(parsedData);
+        await AsyncStorage.setItem('Todo', stringifyData);
+    }
+
+    // 저장된 할 일을 Agenda에 렌더하는 함수
     const renderItem = (item) => {
         return(
-            <TouchableOpacity style={styles.contentContainer}>
+            <View style={styles.contentContainer}>
+                <View style={{flexDirection: 'row'}}>
+                    <Text style={[styles.font, styles.time]}>{item.time}</Text>
+                    {!item.isDone ?
+                        <TouchableOpacity onPress={()=> pressCheck(item)} style={styles.checkBox}>
+                            <AntDesign name="checkcircleo" size={24} color="black" />
+                        </TouchableOpacity>
+                    :
+                        <TouchableOpacity onPress={()=> pressCheck(item)} style={styles.checkBox}>
+                            <AntDesign name="checkcircle" size={24} color="black" />
+                        </TouchableOpacity>
+                    }
+                </View>
                 <View>
                     <Text style={styles.font}>{item.name}</Text>
                 </View>
-            </TouchableOpacity>
+            </View>
         )
     }
 
     return(
         <View style={{flex:1}}>
-            {/* {data.map((value, index)=>(
-                <View key={index} style={styles.contentContainer}>
-                    <Text style={styles.font}>{value}</Text>
-                </View>
-            ))} */}
-            {/* {week.map((weekDay)=>{
-                const textStyles = [styles.font];
-                const touchableStyles = [styles.touchable];
-                const sameDay = isSameDay(weekDay.date, nowDate);
-
-                if(sameDay){
-                    textStyles.push(styles.selectedFont);
-                    touchableStyles.push(styles.selectedTouch);
-                } else {
-                    textStyles
-                }
-
-                return(
-                    <View key={weekDay.formatted}>
-                        <Text>{weekDay.formatted}</Text>
-                        <TouchableOpacity
-                        onPress={()=>setNowDate(weekDay.date)}
-                        style={touchableStyles}
-                        >
-                            <Text style={textStyles}>{weekDay.day}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-            })} */}
             {isLoading ?
             <ActivityIndicator size="large" />
             :
@@ -194,5 +189,14 @@ const styles = StyleSheet.create({
     },
     selectedTouch:{
         backgroundColor: '#4285F4'
+    },
+    time:{
+        fontSize: 18,
+        marginBottom: 16,
+        opacity: 0.5,
+    },
+    checkBox:{
+        position: 'absolute',
+        right: 5
     }
 });

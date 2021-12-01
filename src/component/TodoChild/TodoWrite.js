@@ -56,7 +56,7 @@ export default ({navigation}) => {
 
     const delItems = async () => {
         await AsyncStorage.removeItem('Todo').then(()=>{
-            navigation.navigate('메인');
+            navigation.replace('메인');
         });
     }
 
@@ -71,14 +71,14 @@ export default ({navigation}) => {
         });
     }
 
-    const init = () => {
-        setTodo('');
-        // setYear(0);
-        setMonth(0);
-        setDay(0);
-        setTime(0);
-        setMinute(0);
-    }
+    // const init = () => {
+    //     setTodo('');
+    //     // setYear(0);
+    //     setMonth(0);
+    //     setDay(0);
+    //     setTime(0);
+    //     setMinute(0);
+    // }
 
     // 할 일 추가하기. 완료 버튼에 바인딩 됨.
     async function addTodo(){
@@ -87,9 +87,9 @@ export default ({navigation}) => {
         // const date = new Date();
 
         const nowMonth = date.getMonth() + 1;
-        const nowDay = date.getDate();
-        const nowHour = date.getHours();
-        const nowMinute = date.getMinutes();
+        // const nowDay = date.getDate();
+        // const nowHour = date.getHours();
+        // const nowMinute = date.getMinutes();
 
         // 만약에 새로 적은 날짜들이 현재 날짜보다 적은 모순적인 상황이라면, 내년에 할 일로 간주하고 year에 1추가
         if(month < nowMonth){
@@ -100,9 +100,15 @@ export default ({navigation}) => {
 
         // Agenda에 사용될 키
         const key = `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`;
+        const reservationTime = `${time >= 10 ? time : '0' + time}시 ${minute >= 10 ? minute : '0' + minute}분`;
+        const value = {name: todo, time: reservationTime, isDone: false};
 
         let copiedAllTodo = allTodo;
-        copiedAllTodo[key] = [{name: todo}];
+        if (copiedAllTodo[key] === undefined){
+            copiedAllTodo[key] = [value];
+        } else {
+            copiedAllTodo[key].push(value);
+        }
         console.log(copiedAllTodo);
 
         await AsyncStorage.setItem('Todo', JSON.stringify(copiedAllTodo)).then(()=>{
