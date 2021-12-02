@@ -101,7 +101,7 @@ export default ({navigation}) => {
         // Agenda에 사용될 키
         const key = `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`;
         const reservationTime = `${time >= 10 ? time : '0' + time}시 ${minute >= 10 ? minute : '0' + minute}분`;
-        const value = {name: todo, time: reservationTime, isDone: false};
+        const value = {name: todo, time: reservationTime, isDone: false, schedule: key};
 
         let copiedAllTodo = allTodo;
         if (copiedAllTodo[key] === undefined){

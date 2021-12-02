@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'rea
 import { AntDesign } from '@expo/vector-icons';
 import { Agenda, LocaleConfig } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatISO9075 } from 'date-fns';
 
 const timeToString = (time) => {
     const date = new Date(time);
@@ -71,38 +72,42 @@ export default ({date}) =>{
     }
 
     // 체크 박스를 눌렀을 때 isDone을 반대로 바꾸고 저장하는 함수
-    const pressCheck = async (item) => {
-        await AsyncStorage.getItem('Todo').then((value)=>{
-            let parsedData = JSON.parse(value);
-            
-            if(parsedData !== undefined){
-                const itemsKey = Object.keys(item);
-                const itemsName = item.name;
-                console.log(parsedData);
-                // itemsName이 잘못됐다. 오브젝트의 키면 날짜가 올줄 알았는데 내부 오브젝트의 키인 name과 time이 온다. 다른 해결책 강구
+    const pressCheck = (item) => {
+        let tempTodo = todo;
+        
+        if(tempTodo !== undefined){
+            // 전달 받은 item의 날짜
+            const itemsKey = item.schedule;
 
-                // console.log(item);
-                // const itemInParsedData = parsedData[itemsKey];
+            // 이름 비교를 위한 item의 이름
+            const itemsName = item.name;
 
-                // for(let i = 0; i < itemInParsedData.length; i++){
-                //     let element = itemInParsedData[i];
+            // 시간 비교를 위한 item의 예정 시간
+            const time = item.time;
+            let tempTodo = todo;
 
-                //     if(element.name == itemsName){
-                //         element.isDone = !element.isDone;
-                //         parsedData[itemsKey] = element
-                //     }
-                // }
+            // 해당 item의 Array
+            const itemInParsedData = tempTodo[itemsKey];
 
-                // saveItem(parsedData);
+            for(let i = 0; i < itemInParsedData.length; i++){
+                let element = itemInParsedData[i];
+
+                if(element.name == itemsName && element.time == time){
+                    element.isDone = !element.isDone;
+                    tempTodo[itemsKey][i] = element;
+
+                    setTodo(tempTodo);
+                }
             }
-            
-        });
+
+            saveItem(tempTodo);
+        }
     }
 
     // 저장하는 함수. await를 한번에 두번써도 되는지 몰라서 분리함.
     const saveItem = async (parsedData) => {
-        const stringifyData = JSON.stringify(parsedData);
-        await AsyncStorage.setItem('Todo', stringifyData);
+        const stringifiedData = JSON.stringify(parsedData);
+        await AsyncStorage.setItem('Todo', stringifiedData);
     }
 
     // 저장된 할 일을 Agenda에 렌더하는 함수
@@ -112,11 +117,15 @@ export default ({date}) =>{
                 <View style={{flexDirection: 'row'}}>
                     <Text style={[styles.font, styles.time]}>{item.time}</Text>
                     {!item.isDone ?
-                        <TouchableOpacity onPress={()=> pressCheck(item)} style={styles.checkBox}>
+                        <TouchableOpacity onPress={()=> {
+                            pressCheck(item);
+                        }} style={styles.checkBox}>
                             <AntDesign name="checkcircleo" size={24} color="black" />
                         </TouchableOpacity>
                     :
-                        <TouchableOpacity onPress={()=> pressCheck(item)} style={styles.checkBox}>
+                        <TouchableOpacity onPress={()=> {
+                            pressCheck(item);
+                        }} style={styles.checkBox}>
                             <AntDesign name="checkcircle" size={24} color="black" />
                         </TouchableOpacity>
                     }
