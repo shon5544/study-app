@@ -41,9 +41,6 @@ export default ({navigation}) => {
                 <TouchableOpacity onPress={()=>addTodo()} style={{marginRight: 20}}>
                     <Text style={{fontFamily: 'OTWelcomeRA', color: '#4285F4'}}>완료</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>delItems()} style={{marginRight: 20}}>
-                    <Text style={{fontFamily: 'OTWelcomeRA', color: '#4285F4'}}>삭제</Text>
-                </TouchableOpacity>
                 </>
             )
         });
@@ -53,12 +50,6 @@ export default ({navigation}) => {
         //     init();
         // }
     }, [month, day, time, minute, todo]);
-
-    const delItems = async () => {
-        await AsyncStorage.removeItem('Todo').then(()=>{
-            navigation.replace('메인');
-        });
-    }
 
     // 이전까지의 할 일 리스트 가져오기
     const getTodo = async () => {

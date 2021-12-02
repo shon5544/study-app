@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { View, ActivityIndicator } from 'react-native';
+
 import { Agenda, LocaleConfig } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { formatISO9075 } from 'date-fns';
+import TodoOne from './TodoOne';
 
 const timeToString = (time) => {
     const date = new Date(time);
@@ -22,10 +22,18 @@ export default ({date}) =>{
     const [items, setItems] = useState({});
     const [todo, setTodo] = useState({});
     const [isLoading, SetIsLoading] = useState(true);
+    // const [refreshState, setRefreshState] = useState(true);
 
     // 렌더링 전, 할 일 목록 가져오도록 하기
     useLayoutEffect(()=>{
         getTodo();
+    }, []);
+
+    // 할 일 목록 가져오는데 성공했을시, 로딩 상태 변경
+    useEffect(()=>{
+        if(todo !== {}){
+            SetIsLoading(false);
+        }
     }, []);
 
     // 할 일 목록 가져오기
@@ -39,14 +47,9 @@ export default ({date}) =>{
         })
     }
 
-    // 할 일 목록 가져오는데 성공했을시, 로딩 상태 변경
-    useEffect(()=>{
-        if(todo !== {}){
-            SetIsLoading(false);
-        }
-    }, [todo]);
 
     // Agneda에 넣는 함수. 그냥 베껴온거라 정확히 뭘하는지는 잘 모르겠다.
+    // 대략적으로 한달의 모든 날들에 Item for 날짜 # 번호를 붙여 정리해놓는 것 같다.
     const loadItems = (day) => {
         setTimeout(() => {
           for (let i = -15; i < 85; i++) {
@@ -84,23 +87,64 @@ export default ({date}) =>{
 
             // 시간 비교를 위한 item의 예정 시간
             const time = item.time;
-            let tempTodo = todo;
+            // let tempTodo = todo;
 
             // 해당 item의 Array
             const itemInParsedData = tempTodo[itemsKey];
 
+            // array의 요소 검사 및 해당요소 변경
             for(let i = 0; i < itemInParsedData.length; i++){
                 let element = itemInParsedData[i];
 
                 if(element.name == itemsName && element.time == time){
                     element.isDone = !element.isDone;
                     tempTodo[itemsKey][i] = element;
-
+                    
                     setTodo(tempTodo);
+                    console.log(todo);
                 }
             }
-
+            
             saveItem(tempTodo);
+        }
+    }
+
+    // 할 일 지우는 함수
+    const deleteItem = (item) => {
+        let tempTodo = todo;
+
+        if(tempTodo !== undefined){
+            // 전달 받은 item의 날짜
+            const itemsKey = item.schedule;
+
+            // 이름 비교를 위한 item의 이름
+            const itemsName = item.name;
+
+            // 시간 비교를 위한 item의 예정 시간
+            const time = item.time;
+            // let tempTodo = todo;
+
+            // 해당 item의 Array
+            const itemInParsedData = tempTodo[itemsKey];
+
+            if(itemInParsedData.length === 1){
+                delete tempTodo[itemsKey];
+                saveItem(tempTodo);
+            } else {
+                for(let i = 0; i < itemInParsedData.length; i++){
+                    let element = itemInParsedData[i];
+    
+                    if(element.name == itemsName && element.time == time){
+                        tempTodo[itemsKey].splice(i, 1);
+
+                        setTodo(tempTodo);
+                        console.log(todo);
+                    }
+                }
+
+                saveItem(tempTodo);
+            }
+
         }
     }
 
@@ -112,30 +156,13 @@ export default ({date}) =>{
 
     // 저장된 할 일을 Agenda에 렌더하는 함수
     const renderItem = (item) => {
+        // const [test, setTest] = useState(false);
         return(
-            <View style={styles.contentContainer}>
-                <View style={{flexDirection: 'row'}}>
-                    <Text style={[styles.font, styles.time]}>{item.time}</Text>
-                    {!item.isDone ?
-                        <TouchableOpacity onPress={()=> {
-                            pressCheck(item);
-                        }} style={styles.checkBox}>
-                            <AntDesign name="checkcircleo" size={24} color="black" />
-                        </TouchableOpacity>
-                    :
-                        <TouchableOpacity onPress={()=> {
-                            pressCheck(item);
-                        }} style={styles.checkBox}>
-                            <AntDesign name="checkcircle" size={24} color="black" />
-                        </TouchableOpacity>
-                    }
-                </View>
-                <View>
-                    <Text style={styles.font}>{item.name}</Text>
-                </View>
-            </View>
+            <TodoOne item={item} pressCheck={pressCheck} deleteItem={deleteItem}/>
         )
     }
+
+    
 
     return(
         <View style={{flex:1}}>
@@ -160,52 +187,11 @@ export default ({date}) =>{
                     todayTextColor: '#4285F4',
                     agendaTodayColor: '#4285F4'
                 }}
+                // onRefresh={()=> setTodo(todo)}
+                // refreshing={refreshState}
                 />
             }
             </View>
     )
 }
 
-const styles = StyleSheet.create({
-    contentContainer:{
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-
-        elevation: 3,
-        backgroundColor: '#ffffff',
-        marginTop: 20,
-        marginBottom: 10,
-        padding: 20,
-        borderRadius: 8,
-        width: '90%',
-        alignSelf: 'center'
-    },
-    font: {
-        fontFamily: 'OTWelcomeRA',
-        color: '#000000'
-    },
-    selectedFont:{
-        color: "#ffffff"
-    },
-    touchable:{
-        padding: 10,
-        borderRadius: 40
-    },
-    selectedTouch:{
-        backgroundColor: '#4285F4'
-    },
-    time:{
-        fontSize: 18,
-        marginBottom: 16,
-        opacity: 0.5,
-    },
-    checkBox:{
-        position: 'absolute',
-        right: 5
-    }
-});
