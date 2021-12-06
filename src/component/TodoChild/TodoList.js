@@ -83,11 +83,7 @@ export default ({date}) =>{
             const itemsKey = item.schedule;
 
             // 이름 비교를 위한 item의 이름
-            const itemsName = item.name;
-
-            // 시간 비교를 위한 item의 예정 시간
-            const time = item.time;
-            // let tempTodo = todo;
+            const itemsId = item.id;
 
             // 해당 item의 Array
             const itemInParsedData = tempTodo[itemsKey];
@@ -96,7 +92,7 @@ export default ({date}) =>{
             for(let i = 0; i < itemInParsedData.length; i++){
                 let element = itemInParsedData[i];
 
-                if(element.name == itemsName && element.time == time){
+                if(element.id === itemsId){
                     element.isDone = !element.isDone;
                     tempTodo[itemsKey][i] = element;
                     
@@ -118,11 +114,7 @@ export default ({date}) =>{
             const itemsKey = item.schedule;
 
             // 이름 비교를 위한 item의 이름
-            const itemsName = item.name;
-
-            // 시간 비교를 위한 item의 예정 시간
-            const time = item.time;
-            // let tempTodo = todo;
+            const itemsId = item.id;
 
             // 해당 item의 Array
             const itemInParsedData = tempTodo[itemsKey];
@@ -134,7 +126,7 @@ export default ({date}) =>{
                 for(let i = 0; i < itemInParsedData.length; i++){
                     let element = itemInParsedData[i];
     
-                    if(element.name == itemsName && element.time == time){
+                    if(element.id === itemsId){
                         tempTodo[itemsKey].splice(i, 1);
 
                         setTodo(tempTodo);
@@ -154,11 +146,44 @@ export default ({date}) =>{
         await AsyncStorage.setItem('Todo', stringifiedData);
     }
 
+    // 할 일 수정하는 함수
+    const editItem = (text, item) => {
+        let tempTodo = todo;
+
+        if(tempTodo !== undefined){
+            // 전달 받은 item의 날짜
+            const itemsKey = item.schedule;
+
+            // 이름 비교를 위한 item의 이름
+            const itemsId = item.id;
+
+            // 해당 item의 Array
+            const itemInParsedData = tempTodo[itemsKey];
+
+            for(let i = 0; i < itemInParsedData.length; i++){
+                let element = itemInParsedData[i];
+
+                if(element.id === itemsId){
+                    let copiedItem = item;
+                    copiedItem.name = text;
+                    tempTodo[itemsKey][i] = copiedItem;
+
+                    setTodo(tempTodo);
+                    console.log(todo);
+                }
+            }
+
+            saveItem(tempTodo);
+            
+
+        }
+    }
+
     // 저장된 할 일을 Agenda에 렌더하는 함수
     const renderItem = (item) => {
         // const [test, setTest] = useState(false);
         return(
-            <TodoOne item={item} pressCheck={pressCheck} deleteItem={deleteItem}/>
+            <TodoOne item={item} pressCheck={pressCheck} deleteItem={deleteItem} editItem={editItem}/>
         )
     }
 

@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-// import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
-// import ProgressCircle from 'react-native-progress-circle';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import Rest from './FocusChild/Rest';
 import Timer from './FocusChild/Timer';
+import { Audio } from 'expo-av';
 
-export default ({navigation, route})=>{
+
+
+export default ({ navigation, route }) => {
     const [set, setSet] = useState(1);
     const [time, setTime] = useState(0);
     const [minute, setMinute] = useState(25);
@@ -15,73 +16,86 @@ export default ({navigation, route})=>{
     const [rest, setRest] = useState(false);
     const [autoStart, setAutoStart] = useState(null);
     const [total, setTotal] = useState(0);
+    const [sound, setSound] = useState();
 
-    function totalHandle(value){
+    async function playSound() {
+        console.log('Loading Sound');
+        const { sound } = await Audio.Sound.createAsync(
+            require('../Sounds/ring.mp3')
+        );
+        setSound(sound);
+        console.log('Playing Sound');
+        await sound.playAsync();
+    }
+
+    function totalHandle(value) {
         setTotal(value);
     }
 
-    function restToParent(data){
+    function restToParent(data) {
         setRest(data);
         setAutoStart(true);
     }
 
-    function timerToParent(data){
+    function timerToParent(data) {
         setRest(data);
     }
 
-    function timeHandle(value){
+    function timeHandle(value) {
         setTime(value);
     }
 
-    function minHandle(value){
+    function minHandle(value) {
         setMinute(value);
     }
 
-    function secHandle(value){
+    function secHandle(value) {
         setSec(value);
     }
 
-    function setHandle(value){
+    function setHandle(value) {
         setSet(value);
     }
 
-    function fstTHandle(value){
+    function fstTHandle(value) {
         setFirstT(value);
     }
 
-    function fstMHandle(value){
+    function fstMHandle(value) {
         setFirstM(value);
     }
 
-    function fstSHandle(value){
+    function fstSHandle(value) {
         setFirstS(value);
     }
 
-    return(
+    return (
         <>
             {!rest ?
                 <Timer
-                set={set}
-                start={autoStart} 
-                restHanle={timerToParent} 
-                time={time} 
-                minute={minute} 
-                sec={sec} 
-                firstT={firstT}
-                firstM={firstM}
-                firstS={firstS}
-                timeHandle={timeHandle}
-                minHandle={minHandle}
-                secHandle={secHandle}
-                setHandle={setHandle}
-                fstTHandle={fstTHandle}
-                fstMHandle={fstMHandle}
-                fstSHandle={fstSHandle}
-                total={total}
-                setTotal={totalHandle}
+                    set={set}
+                    start={autoStart}
+                    restHanle={timerToParent}
+                    time={time}
+                    minute={minute}
+                    sec={sec}
+                    firstT={firstT}
+                    firstM={firstM}
+                    firstS={firstS}
+                    timeHandle={timeHandle}
+                    minHandle={minHandle}
+                    secHandle={secHandle}
+                    setHandle={setHandle}
+                    fstTHandle={fstTHandle}
+                    fstMHandle={fstMHandle}
+                    fstSHandle={fstSHandle}
+                    total={total}
+                    setTotal={totalHandle}
+                    // sound={sound}
+                    playAudio={playSound}
                 />
-            :
-            <Rest callback={restToParent}/>
+                :
+                <Rest callback={restToParent} playAudio={playSound} />
             }
         </>
     )

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
+// import Sound from 'react-native-sound';
+// import SoundPlayer from 'react-native-sound-player';
 
-export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal})=>{
+export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal, playAudio})=>{
 
     const [startState, setStartState] = useState(false);
     const [stopState, setStopState] = useState(false);
@@ -19,6 +21,19 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
     
     // const [loopState, setLoopState] = useState(true);
     // const [startPoint, setStartPoint] = useState(0);
+
+    // const [sound, setSound] = useState(null);
+
+    // useLayoutEffect(()=>{
+    //     var sd = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (e)=>{
+    //         if(e){
+    //             console.log(e);
+    //             return;
+    //         }
+    //     })
+    //     setSound(sd);
+    //     new Sound()
+    // }, []);
 
     const interval = useRef();
 
@@ -64,6 +79,11 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         } else if (sec === 0) {
             minMinus();
             secHandle(59);
+            // setCurrent(1);
+        }
+
+        if(current === 0){
+            setCurrent((current)=> current + 1);
         }
         
         setCurrent((current)=>(current + 1));
@@ -95,11 +115,15 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
 
         if(!startState){
             // minus();
+            // playAudio();
             init();
             // restHanle(true);
         }
 
         if(cStop){
+            // SoundPlayer.playSoundFile('ring', 'mp3');
+            // sound.play();
+            playAudio();
             setCStop(false);
             minus();
             init();
@@ -110,6 +134,9 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         //startState가 핵심키
         //loopState를 만들어서 이용해보자
         if(time === 0 && minute === 0 && sec === 0){
+            // sound.play();
+            playAudio();
+            // SoundPlayer.playSoundFile('ring', 'mp3');
             if(set>1){
                 minus();
                 init();
@@ -134,10 +161,6 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
     useEffect(()=>{
         setStartState(start);
     }, [start]);
-
-    useEffect(()=>{
-        console.log(circleWidth);
-    }, [circleWidth]);
     
 
     return(
@@ -276,6 +299,7 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                         if(set>1){
                             setCStop(true);
                         } else {
+                            playAudio();
                             setStartState(false);
                         }
                         // setStartState(!startState);

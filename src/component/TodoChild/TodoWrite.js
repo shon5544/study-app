@@ -74,6 +74,19 @@ export default ({navigation}) => {
     // 할 일 추가하기. 완료 버튼에 바인딩 됨.
     async function addTodo(){
         let year;
+        // 할 일들 복사본
+        let copiedAllTodo = allTodo;
+        // 할 일의 id. 아무것도 없으면 id가 0이고 무언가 있으면 마지막 id로부터 1을 추가한 값이 된다
+        let id = 0;
+        // 키들의 집합
+        const keys = Object.keys(copiedAllTodo);
+
+        // 무언가 있을 경우 가장 마지막 요소의 id보다 1크게 해라
+        if(keys.length > 0){
+            // 오브젝트의 마지막 요소
+            const lastElement = copiedAllTodo[keys[keys.length - 1]];
+            id = lastElement[lastElement.length - 1].id + 1;
+        }
 
         // const date = new Date();
 
@@ -91,10 +104,11 @@ export default ({navigation}) => {
 
         // Agenda에 사용될 키
         const key = `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`;
+        // 할 일 수행 시간
         const reservationTime = `${time >= 10 ? time : '0' + time}시 ${minute >= 10 ? minute : '0' + minute}분`;
-        const value = {name: todo, time: reservationTime, isDone: false, schedule: key};
+        // 저장할 할 일 값
+        const value = {name: todo, time: reservationTime, isDone: false, schedule: key, id};
 
-        let copiedAllTodo = allTodo;
         if (copiedAllTodo[key] === undefined){
             copiedAllTodo[key] = [value];
         } else {

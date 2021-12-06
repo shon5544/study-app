@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
-export default ({item, pressCheck, deleteItem}) => {
+export default ({item, pressCheck, deleteItem, editItem}) => {
     const [isChecked, setIsChecked] = useState(item.isDone);
     const [isShown, setIsShown] = useState(true);
+    const [isEdit, setIsEdit] = useState(false);
+    const [value, setValue] = useState('');
 
     return(
         <>
@@ -13,26 +15,44 @@ export default ({item, pressCheck, deleteItem}) => {
             <>
             {isShown ?
                 <>
-                <View style={styles.contentContainer}>
-                    <View style={{flexDirection: 'row'}}>
-                        <Text style={[styles.font, styles.time]}>{item.time}</Text>
-                        <TouchableOpacity onPress={()=> {
-                            pressCheck(item);
-                            setIsChecked(true);
-                        }} style={styles.checkBox}>
-                            <AntDesign name="checkcircleo" size={24} color="black" />
+                {!isEdit ? 
+                    <>
+                        <TouchableOpacity onPress={()=> setIsEdit(true)} style={styles.contentContainer}>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text style={[styles.font, styles.time]}>{item.time}</Text>
+                                <TouchableOpacity onPress={()=> {
+                                    pressCheck(item);
+                                    setIsChecked(true);
+                                }} style={styles.checkBox}>
+                                    <AntDesign name="checkcircleo" size={24} color="black" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={()=>{
+                                    deleteItem(item);
+                                    setIsShown(false);
+                                }} style={styles.trashCan}>
+                                    <FontAwesome name="trash-o" size={24} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                            <View>
+                                <Text style={styles.font}>{item.name}</Text>
+                            </View>
                         </TouchableOpacity>
+                    </>
+                :
+                    <>
                         <TouchableOpacity onPress={()=>{
-                            deleteItem(item);
-                            setIsShown(false);
-                        }} style={styles.trashCan}>
-                            <FontAwesome name="trash-o" size={24} color="black" />
+                            editItem(value, item);
+                            setIsEdit(false);
+                        }} style={styles.contentContainer}>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text style={[styles.font, styles.time]}>{item.time}</Text>
+                            </View>
+                            <View>
+                                <TextInput onChangeText={(text) => setValue(text)} style={[styles.font, {opacity: 0.5}]} placeholder={item.name}/>
+                            </View>
                         </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Text style={styles.font}>{item.name}</Text>
-                    </View>
-                </View>
+                    </>
+                }
 
                 </>
                 : <></>}
@@ -113,7 +133,7 @@ const styles = StyleSheet.create({
     },
     checkedText:{
         textDecorationLine: 'line-through',
-        opacity: 0.5
+        opacity: 0.3
     },
     trashCan:{
         position: 'absolute',

@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 
-export default ({navigation, callback})=> {
+export default ({navigation, callback, playAudio})=> {
     const [minuteR, setMinuteR] = useState(5);
     const [secR, setSecR] = useState(0);
+    const [circleWidth, setCircleWidth] = useState(0);
 
     const interval = useRef();
 
@@ -12,7 +13,7 @@ export default ({navigation, callback})=> {
         if(minuteR > 0){
             setMinuteR(minuteR - 1);
         } else if (minuteR === 0) {
-            setMinuteR(59);
+            setMinuteR(0);
         }
     }
 
@@ -26,12 +27,18 @@ export default ({navigation, callback})=> {
         }
     }
 
+    const onLayout = (event) => {
+        const {height} = event.nativeEvent.layout;
+        setCircleWidth(height);
+    }
+
     useEffect(()=>{
         interval.current = setInterval(secMinusR, 1000);
 
         if(minuteR <= 0 && secR <= 0){
             // navigation.navigate('메인', {state: true});
             callback(false);
+            playAudio();
         }
 
         return ()=>{
@@ -41,10 +48,10 @@ export default ({navigation, callback})=> {
 
     return(
         <View style={styles.container}>
-            <View style={styles.timerContainer}>
+            <View onLayout={onLayout} style={styles.timerContainer}>
                 <ProgressCircle
                     percent={100}
-                    radius={90}
+                    radius={circleWidth / 2.12}
                     borderWidth={8}
                     color="#3399FF"
                     shadowColor="#EBEBEB"
@@ -58,6 +65,7 @@ export default ({navigation, callback})=> {
                 onPress={()=>{
                     // navigation.navigate('메인', {state: true});
                     callback(false);
+                    playAudio();
                 }}
                 style={[styles.button, {
                     marginTop: 20,
@@ -91,7 +99,9 @@ export default ({navigation, callback})=> {
                         borderRightWidth: 2,
                     }}
                     onPress={()=>{
-                        setMinuteR((minuteR)=> minuteR - 1);
+                        if(minuteR > 0){
+                            setMinuteR((minuteR)=> minuteR - 1);
+                        }
                     }}>
                         <Text style={[styles.text, {fontSize: 18}]}>-1</Text>
                 </TouchableOpacity>
@@ -130,13 +140,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 1,
         elevation: 5,
-        width: 200,
-        height: 200,
-        borderRadius: 100,
+        width: '60%',
+        aspectRatio: 1,
+        borderRadius: 200,
         backgroundColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20
+        marginTop: '7%',
+        marginBottom: '3%'
     },
     text:{
         fontFamily: 'OTWelcomeRA'
