@@ -133,7 +133,7 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
 
         //startState가 핵심키
         //loopState를 만들어서 이용해보자
-        if(time === 0 && minute === 0 && sec === 0){
+        if(startState && time === 0 && minute === 0 && sec === 0){
             // sound.play();
             playAudio();
             // SoundPlayer.playSoundFile('ring', 'mp3');
@@ -228,16 +228,31 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                         marginTop: 30
                         }}>
                         <TextInput style={styles.text} placeholder="시간" keyboardType='numeric' onChangeText={(value)=> {
-                            timeHandle(parseInt(value));
-                            fstTHandle(parseInt(value));
+                            if(value){
+                                timeHandle(parseInt(value));
+                                fstTHandle(parseInt(value));
+                            } else {
+                                timeHandle(parseInt(value));
+                                fstTHandle(parseInt(value));
+                            }
                         }} style={{paddingRight: 7, borderColor: '#EBEBEB', borderRightWidth: 2, textAlign:"center",  paddingLeft: 3}}/>
                         <TextInput style={styles.text} placeholder="분" keyboardType='numeric' onChangeText={(value)=> {
-                            minHandle(parseInt(value));
-                            fstMHandle(parseInt(value));
+                            if(value){
+                                minHandle(parseInt(value));
+                                fstMHandle(parseInt(value));
+                            } else {
+                                minHandle(parseInt(0));
+                                fstMHandle(parseInt(0));
+                            }
                         }} style={{paddingRight: 3, borderColor: '#EBEBEB', borderRightWidth: 2, paddingLeft: 10}}/>
                         <TextInput style={styles.text} placeholder="초" keyboardType="numeric" onChangeText={(value)=> {
-                            secHandle(parseInt(value));
-                            fstSHandle(parseInt(value));
+                            if(value){
+                                secHandle(parseInt(value));
+                                fstSHandle(parseInt(value));
+                            } else {
+                                secHandle(parseInt(0));
+                                fstSHandle(parseInt(0))
+                            }
                         }} style={{paddingLeft: 10}}/>
                     </View>
                     <TouchableOpacity
@@ -293,7 +308,13 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                         borderRadius: 30,
                         marginTop: 26,
                         backgroundColor: '#3399FF'
-                    }}><Text style={[styles.text, {fontSize: 18, color: '#ffffff'}]}>일시정지</Text></TouchableOpacity>
+                    }}>
+                        {stopState? 
+                            <Text style={[styles.text, {fontSize: 18, color: '#ffffff'}]}>재개하기</Text>
+                        :
+                            <Text style={[styles.text, {fontSize: 18, color: '#ffffff'}]}>일시정지</Text>
+                        }
+                    </TouchableOpacity>
                     <TouchableOpacity
                     onPress={()=>{
                         if(set>1){

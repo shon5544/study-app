@@ -41,7 +41,9 @@ export default ({item, pressCheck, deleteItem, editItem}) => {
                 :
                     <>
                         <TouchableOpacity onPress={()=>{
-                            editItem(value, item);
+                            if(value){
+                                editItem(value, item);
+                            }
                             setIsEdit(false);
                         }} style={styles.contentContainer}>
                             <View style={{flexDirection: 'row'}}>

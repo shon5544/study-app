@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Focus from "../component/Focus";
 import Note from "../component/Note";
 import Todo from "../component/Todo";
-import Schedule from "../component/Schedule";
+import Schedule from "../component/Settings";
 import { MaterialIcons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -21,7 +21,7 @@ export default ({navigation})=>{
                 let focusColor;
                 let noteColor;
                 let todoColor;
-                let calendarColor;
+                let settingColor;
 
                 if(route.name === '집중'){
                     focusColor = focused ? '#4285F4' : 'black';
@@ -33,8 +33,8 @@ export default ({navigation})=>{
                     todoColor = focused ? '#4285F4' : 'black';
                     return <MaterialCommunityIcons name="playlist-edit" size={26} color={todoColor} />
                 } else {
-                    calendarColor = focused ? '#4285F4' : 'black';
-                    return <AntDesign name="calendar" size={24} color={calendarColor} />
+                    settingColor = focused ? '#4285F4' : 'black';
+                    return <AntDesign name="setting" size={24} color={settingColor} />
                 }
             },
             headerTitleAlign: 'center',
@@ -78,7 +78,7 @@ export default ({navigation})=>{
             name="할 일" 
             component={Todo}
             />
-            <Tab.Screen name="일정" component={Schedule}/>
+            <Tab.Screen name="설정" component={Schedule}/>
         </Tab.Navigator>
     )
 }

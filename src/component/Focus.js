@@ -5,7 +5,10 @@ import { Audio } from 'expo-av';
 
 
 
-export default ({ navigation, route }) => {
+export default ({ navigation }) => {
+
+    // 아니 주석 없이 코딩하니까 여기 스테이트들이 다 뭐에 썼던건지 하나도 기억이 안나잖아 ㅅㅂ
+    // 다음부터는 주석없이 코딩하지 말자..
     const [set, setSet] = useState(1);
     const [time, setTime] = useState(0);
     const [minute, setMinute] = useState(25);
@@ -28,6 +31,7 @@ export default ({ navigation, route }) => {
         await sound.playAsync();
     }
 
+    // 굳이 왜 이런 노가다를 뛰었는지 모르겠다. 이때 정신이 없었나보다.
     function totalHandle(value) {
         setTotal(value);
     }
@@ -91,7 +95,6 @@ export default ({ navigation, route }) => {
                     fstSHandle={fstSHandle}
                     total={total}
                     setTotal={totalHandle}
-                    // sound={sound}
                     playAudio={playSound}
                 />
                 :

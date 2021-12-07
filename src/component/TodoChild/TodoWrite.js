@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import SetTime from "./SetTime";
 
 export default ({navigation}) => {
     const [todo, setTodo] = useState('');
@@ -17,10 +18,17 @@ export default ({navigation}) => {
     useLayoutEffect(()=>{
         // const date = new Date();
         // setYear(date.getFullYear());
+        const minute = date.getMinutes();
         setMonth(date.getMonth() + 1);
         setDay(date.getDate());
-        setTime(date.getHours());
-        setMinute(date.getMinutes());
+        if(minute < 30){
+            setTime(date.getHours());
+            setMinute(date.getMinutes() + (30 - date.getMinutes));
+        } else {
+            console.log(time);
+            setTime(date.getHours() + 1);
+            setMinute(0)
+        }
         getTodo();
 
         
@@ -128,37 +136,14 @@ export default ({navigation}) => {
 
     return(
         <View style={styles.container}>
-            <View style={{flexDirection: 'row', alignItems: 'center', padding: 20, alignSelf: 'center'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
-                    <TextInput onChangeText={(value)=>{
-                        setMonth(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getMonth()+1}`} keyboardType="numeric"/>
-                    <Text style={styles.font}>월</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
-                    <TextInput onChangeText={(value)=>{
-                        setDay(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getDate()}`} keyboardType="numeric"/>
-                    <Text style={styles.font}>일</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
-                    <TextInput onChangeText={(value)=>{
-                        setTime(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getHours()}`} keyboardType="numeric"/>
-                    <Text style={styles.font}>시</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 10}}>
-                    <TextInput onChangeText={(value)=>{
-                        setMinute(parseInt(value));
-                    }} style={[styles.font, {marginRight: 5}]} placeholder={`${date.getMinutes()}`} keyboardType="numeric"/>
-                    <Text style={styles.font}>분</Text>
-                </View>
+            <View style={{marginTop: 20}}>
+                <TextInput
+                onChangeText={(value)=>{
+                    setTodo(value);
+                }}
+                style={[styles.input, styles.font]} placeholder={"할 일을 적어주세요!"} multiline/>
             </View>
-            <TextInput 
-            onChangeText={(value)=>{
-                setTodo(value);
-            }}
-            style={[styles.input, styles.font]} placeholder={"할 일을 적어주세요!"}/>
+            <SetTime styles={styles} date={date} setDay={setDay} setMinute={setMinute} setMonth={setMonth} setTime={setTime}/>
         </View>
     )
 }

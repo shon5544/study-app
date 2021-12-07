@@ -1,47 +1,41 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import MasonryList from '@react-native-seoul/masonry-list';
 import NoteBlock from './NoteBlock';
 
 export default ({noteList, tagList ,navigation})=>{
+    const [isExist, setIsExist] = useState(false);
+
+    useEffect(()=>{
+        if(noteList.length > 0){
+            setIsExist(true);
+        }
+    }, [noteList]);
 
     return(
-        <View style={styles.container}>
-            {/* <MasonryList
-                style={{alignSelf: 'stretch'}}
-                keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={{
-                    paddingLeft: 10,
-                    alignSelf: 'stretch',
-                }}
+        <>
+        {isExist?
+            <View style={styles.container}>
+                <MasonryList
                 numColumns={2}
-                data={noteList}
-                renderItem={NoteBlock}
-            /> */}
-            <MasonryList
-            numColumns={2}
-            renderItem={({item}) => <NoteBlock key={item.id} item={item} tagList={tagList} navigation={navigation}/>}
-            onEndReachedThreshold={0.1}
-            keyPrefix={"0"}
-            // keyExtractor={(item, index)=> console.log(index)}
-            data={noteList.reverse()}
-            keyExtractor={(item, index) => index.toString()}
-            style={{alignSelf: 'stretch'}}
-            contentContainerStyle={{
-                paddingTop: 15
-            }}
-            />
-            {/* <ScrollView> */}
-                
-                {/* {noteList.map((value, index)=>(
-                    // <View style={styles.block} key={index}>
-                    //     <Text style={[styles.text]}>{value.title === null ? '제목 없음': value.title}</Text>
-                    //     <Text style={[styles.text]}>{value.tag === null ? '제목 없음': value.tag}</Text>
-                    //     <Text style={[styles.text]}>{value.content === null ? '제목 없음': value.content}</Text>
-                    // </View>
-                ))} */}
-            {/* </ScrollView> */}
-        </View>
+                renderItem={({item}) => <NoteBlock key={item.id} item={item} tagList={tagList} navigation={navigation}/>}
+                onEndReachedThreshold={0.1}
+                keyPrefix={"0"}
+                // keyExtractor={(item, index)=> console.log(index)}
+                data={noteList.reverse()}
+                keyExtractor={(item, index) => index.toString()}
+                style={{alignSelf: 'stretch'}}
+                contentContainerStyle={{
+                    paddingTop: 15
+                }}
+                />
+            </View>
+        :
+            <View style={[styles.container, {justifyContent: 'center'}]}>
+                <Text style={[styles.text, {opacity: 0.3, fontSize: 20, marginBottom: 30}]}>노트에 적힌 글이 없어요!</Text>
+            </View>
+        }
+        </>
     )
 
     // 노트 정보를 가져와야 하는 상황에서 우리는 AsyncStorage를 사용해야하는데 이게 이름처럼 비동기 함수임.
