@@ -1,10 +1,11 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 // import Sound from 'react-native-sound';
 // import SoundPlayer from 'react-native-sound-player';
 
-export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal, playAudio})=>{
+export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, sec, setHandle,timeHandle, minHandle, secHandle, fstTHandle, fstMHandle, fstSHandle, total, setTotal, playAudio, navigation})=>{
 
     const [startState, setStartState] = useState(false);
     const [stopState, setStopState] = useState(false);
@@ -17,45 +18,25 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
     const [cStop, setCStop] = useState(false);
 
     const [circleWidth, setCircleWidth] = useState(0);
-    
-    
-    // const [loopState, setLoopState] = useState(true);
-    // const [startPoint, setStartPoint] = useState(0);
+    const [review, setReview] = useState(true);
 
-    // const [sound, setSound] = useState(null);
-
-    // useLayoutEffect(()=>{
-    //     var sd = new Sound('ring.mp3', Sound.MAIN_BUNDLE, (e)=>{
-    //         if(e){
-    //             console.log(e);
-    //             return;
-    //         }
-    //     })
-    //     setSound(sd);
-    //     new Sound()
-    // }, []);
-
+    // 초 감소에 쓸 interval
     const interval = useRef();
 
-    function plus(){
+    // 세트 추가
+    const plus = () => {
         setHandle((set)=>set+1);
-        // setStartPoint((startPoint)=> startPoint + 1);
-        // setLoopState(true);
     }
 
-    function minus(){
+    // 세트 감소
+    const minus = () => {
         if(set > 1){
             setHandle((set)=>set-1);
-            // setStartPoint((startPoint)=> startPoint - 1);
         }
-        
-        // console.log(set);
-        // console.log(loopState);
     }
 
-    // 2 -> 1 : setLoopState(false);
-
-    function timeMinus(){
+    // 시간 감소
+    const timeMinus = () => {
         if(time > 0){
             timeHandle(time - 1);
         } else if (time === 0) {
@@ -63,7 +44,8 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         }
     }
 
-    function minMinus(){
+    // 분 감소
+    const minMinus = () => {
         if(minute > 0){
             minHandle(minute - 1);
         } else if (minute === 0) {
@@ -72,7 +54,8 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         }
     }
 
-    function secMinus(){
+    // 초 감소
+    const secMinus = () =>{
         if(sec > 0){
             secHandle((sec)=> sec - 1);
             // setCurrent(current + 1);
@@ -88,12 +71,12 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         
         setCurrent((current)=>(current + 1));
         setPercent(()=>(parseFloat((current / total * 100).toFixed(1))));
-        console.log(`value : ${(current / total * 100).toFixed(1)} || total : ${total}, current : ${current}`);
+        // console.log(`value : ${(current / total * 100).toFixed(1)} || total : ${total}, current : ${current}`);
     }
 
-    function init(){
+    // 초기화 함수
+    const init = () =>{
         clearInterval(interval.current);
-        // setStopState(false);
         timeHandle(firstT);
         minHandle(firstM);
         secHandle(firstS);
@@ -101,11 +84,24 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         setPercent(0);
     }
 
+    // View의 크기를 알아내는 함수
     const onLayout = (event) => {
         const {height} = event.nativeEvent.layout;
         setCircleWidth(height);
     }
+
+    // 복습노트 설정 가져오는 함수
+    const getReviewOption = async () => {
+        await AsyncStorage.getItem('Review').then((value)=>{
+            if(value){
+                const parsedData = JSON.parse(value);
+                setReview(parsedData);
+                console.log(review);
+            }
+        })
+    }
     
+    // 전체적인 재생 이벤트
     useEffect(()=>{
         if(startState && !stopState){
             interval.current = setInterval(secMinus, 1000);
@@ -114,38 +110,30 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         }
 
         if(!startState){
-            // minus();
-            // playAudio();
             init();
-            // restHanle(true);
         }
 
         if(cStop){
-            // SoundPlayer.playSoundFile('ring', 'mp3');
-            // sound.play();
             playAudio();
             setCStop(false);
             minus();
             init();
-            // setStartState(false);
             restHanle(true);
         }
 
-        //startState가 핵심키
-        //loopState를 만들어서 이용해보자
         if(startState && time === 0 && minute === 0 && sec === 0){
-            // sound.play();
             playAudio();
-            // SoundPlayer.playSoundFile('ring', 'mp3');
             if(set>1){
                 minus();
                 init();
                 setStartState(false);
                 restHanle(true);
-                // navigation.navigate('휴식');
             } else {
                 init();
                 setStartState(false);
+                if(review){
+                    navigation.navigate('복습노트');
+                }
             }
         }
 
@@ -158,10 +146,15 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
         }
     }, [sec, startState, stopState]);
 
+    // 이건 뭐고 왜 있는지 기억 안나는 데 얘 없으면 제대로 안돌아감.
+    // 과거에 내가 필요 했으니까 넣었겠지
     useEffect(()=>{
         setStartState(start);
     }, [start]);
     
+    useEffect(()=>{
+        getReviewOption();
+    }, [startState]);
 
     return(
         <>
@@ -322,6 +315,9 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                         } else {
                             playAudio();
                             setStartState(false);
+                            if(review){
+                                navigation.navigate('복습노트');
+                            }
                         }
                         // setStartState(!startState);
                         // setTime(firstT);

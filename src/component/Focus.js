@@ -96,6 +96,7 @@ export default ({ navigation }) => {
                     total={total}
                     setTotal={totalHandle}
                     playAudio={playSound}
+                    navigation={navigation}
                 />
                 :
                 <Rest callback={restToParent} playAudio={playSound} />

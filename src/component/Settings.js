@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import AllowPush from './settingChild/AllowPush';
+import AllowWrite from './settingChild/AllowWrite';
 import HowToUse from './settingChild/HowToUse';
 import OSS from './settingChild/OSS';
 import Version from './settingChild/Version';
@@ -10,8 +11,9 @@ export default ({navigation})=>{
         <View style={{flex: 1, backgroundColor: '#ffffff'}}>
             <Version style={style.topBox} />
             <OSS style={style.box} navigation={navigation} />
-            <AllowPush style={style.box} />
             <HowToUse style={style.box} navigation={navigation}/>
+            <AllowPush style={style.box} />
+            <AllowWrite style={style.box}/>
         </View>
     )
 }
