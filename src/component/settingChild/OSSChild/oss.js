@@ -10,6 +10,16 @@ const oss = [
       "forceGenerate": true
     },
     {
+      "artifact": "",
+      "name": "Books free icon",
+      "license": "Flaticon",
+      "url": "https://www.freepik.com",
+      "authors": [
+        "Freepik"
+      ],
+      "forceGenerate": true
+    },
+    {
       "artifact": "npm:@babel/code-frame:+",
       "name": "@babel/code-frame",
       "license": "MIT",

@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
-export default ({style}) => {
+export default ({style, navigation}) => {
     return(
-        <TouchableOpacity style={[style]}>
+        <TouchableOpacity style={[style]} onPress={()=>navigation.navigate('할 일 탭 사용법')}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <MaterialCommunityIcons name="playlist-edit" size={26} color="black" />
                 <Text style={styles.font}>할 일 탭</Text>

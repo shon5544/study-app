@@ -225,8 +225,8 @@ export default ({start, restHanle, set, firstT, firstM, firstS, time, minute, se
                                 timeHandle(parseInt(value));
                                 fstTHandle(parseInt(value));
                             } else {
-                                timeHandle(parseInt(value));
-                                fstTHandle(parseInt(value));
+                                timeHandle(parseInt(0));
+                                fstTHandle(parseInt(0));
                             }
                         }} style={{paddingRight: 7, borderColor: '#EBEBEB', borderRightWidth: 2, textAlign:"center",  paddingLeft: 3}}/>
                         <TextInput style={styles.text} placeholder="분" keyboardType='numeric' onChangeText={(value)=> {

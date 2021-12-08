@@ -97,7 +97,7 @@ export default ({date}) =>{
                     tempTodo[itemsKey][i] = element;
                     
                     setTodo(tempTodo);
-                    console.log(todo);
+                    // console.log(todo);
                 }
             }
             
@@ -130,7 +130,7 @@ export default ({date}) =>{
                         tempTodo[itemsKey].splice(i, 1);
 
                         setTodo(tempTodo);
-                        console.log(todo);
+                        // console.log(todo);
                     }
                 }
 
@@ -169,7 +169,7 @@ export default ({date}) =>{
                     tempTodo[itemsKey][i] = copiedItem;
 
                     setTodo(tempTodo);
-                    console.log(todo);
+                    // console.log(todo);
                 }
             }
 

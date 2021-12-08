@@ -9,6 +9,9 @@ import TodoWrite from '../component/TodoChild/TodoWrite';
 import AllUsage from '../component/settingChild/HowToUseChild/AllUsage';
 import AllOSS from '../component/settingChild/OSSChild/AllOSS';
 import OSSDetail from '../component/settingChild/OSSChild/OSSDetail';
+import UsageOfFocus from '../component/settingChild/HowToUseChild/UsageFocusChild/UsageOfFocus';
+import UsageOfNote from '../component/settingChild/HowToUseChild/UsageNoteChild/UsageOfNote';
+import UsageOfTodo from '../component/settingChild/HowToUseChild/UsageTodoChild/UsageOfTodo';
 
 
 const Stack = createStackNavigator()
@@ -68,6 +71,25 @@ export default ()=>{
                             fontFamily: 'OTWelcomeRA'
                         }
                     }} name="라이선스 자세히 보기" component={OSSDetail}/>
+                    <Stack.Screen options={{
+                        headerShown: true,
+                        headerTitleStyle:{
+                            fontFamily: 'OTWelcomeRA'
+                        }
+                    }} name="집중 탭 사용법" component={UsageOfFocus}/>
+                    <Stack.Screen options={{
+                        headerShown: true,
+                        headerTitleStyle:{
+                            fontFamily: 'OTWelcomeRA'
+                        }
+                    }} name="노트 탭 사용법" component={UsageOfNote}/>
+                    <Stack.Screen options={{
+                        headerShown: true,
+                        headerTitleStyle:{
+                            fontFamily: 'OTWelcomeRA'
+                        }
+                    }} name="할 일 탭 사용법" component={UsageOfTodo}/>
+                    
                 </Stack.Navigator>
              : <View></View>}
         </>

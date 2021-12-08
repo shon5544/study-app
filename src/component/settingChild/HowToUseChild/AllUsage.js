@@ -6,12 +6,12 @@ import UsageTodo from './UsageTodo';
 
 
 
-export default ()=>{
+export default ({navigation})=>{
     return(
         <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-            <UsageFocus style={style.topBox} />
-            <UsageNote style={style.box} />
-            <UsageTodo style={style.box} />
+            <UsageFocus style={style.topBox} navigation={navigation} />
+            <UsageNote style={style.box} navigation={navigation} />
+            <UsageTodo style={style.box} navigation={navigation} />
         </View>
     )
 }

@@ -25,7 +25,7 @@ export default ({navigation}) => {
             setTime(date.getHours());
             setMinute(date.getMinutes() + (30 - date.getMinutes));
         } else {
-            console.log(time);
+            // console.log(time);
             setTime(date.getHours() + 1);
             setMinute(0)
         }
@@ -122,16 +122,16 @@ export default ({navigation}) => {
         } else {
             copiedAllTodo[key].push(value);
         }
-        console.log(copiedAllTodo);
+        // console.log(copiedAllTodo);
 
         await AsyncStorage.setItem('Todo', JSON.stringify(copiedAllTodo)).then(()=>{
-            console.log('저장됨');
+            // console.log('저장됨');
             navigation.replace('메인');
         });
     }
 
     useEffect(()=>{
-        console.log(allTodo);
+        // console.log(allTodo);
     }, [allTodo]);
 
     return(
