@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Agenda, LocaleConfig } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TodoOne from './TodoOne';
@@ -194,6 +194,7 @@ export default ({date}) =>{
             {isLoading ?
             <ActivityIndicator size="large" />
             :
+            // <KeyboardAwareScrollView style={{flex:1}}>
                 <Agenda
                 items={todo}
                 loadItemsForMonth={loadItems}
@@ -215,6 +216,7 @@ export default ({date}) =>{
                 // onRefresh={()=> setTodo(todo)}
                 // refreshing={refreshState}
                 />
+            // </KeyboardAwareScrollView>
             }
             </View>
     )

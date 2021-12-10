@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { EvilIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,18 +41,18 @@ export default ({route, navigation}) => {
 
     return(
         <View style={styles.container}>
-            <View style={styles.box}>
-                <View>
-                    <Text style={[styles.font, styles.title]}>{route.params.title}</Text>
+                <View style={styles.box}>
+                    <View>
+                        <Text style={[styles.font, styles.title]}>{route.params.title}</Text>
+                    </View>
+                    <View style={styles.tag}>
+                        <View style={[styles.dot, {backgroundColor: route.params.tagColor}]}></View>
+                        <Text style={[styles.font]}>{route.params.tag}</Text>
+                    </View>
+                    <ScrollView>
+                        <Text style={[styles.font]}>{route.params.content}</Text>
+                    </ScrollView>
                 </View>
-                <View style={styles.tag}>
-                    <View style={[styles.dot, {backgroundColor: route.params.tagColor}]}></View>
-                    <Text style={[styles.font]}>{route.params.tag}</Text>
-                </View>
-                <View>
-                    <Text style={[styles.font]}>{route.params.content}</Text>
-                </View>
-            </View>
         </View>
     )
 }
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginTop: 10,
 
-        width: '90%'
+        width: '90%',
+        maxHeight: '95%'
     },
     title:{
         fontSize: 23,

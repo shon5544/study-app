@@ -23,7 +23,7 @@ export default ({navigation}) => {
         setDay(date.getDate());
         if(minute < 30){
             setTime(date.getHours());
-            setMinute(date.getMinutes() + (30 - date.getMinutes));
+            setMinute(date.getMinutes() + (30 - date.getMinutes()));
         } else {
             // console.log(time);
             setTime(date.getHours() + 1);
@@ -130,9 +130,9 @@ export default ({navigation}) => {
         });
     }
 
-    useEffect(()=>{
-        // console.log(allTodo);
-    }, [allTodo]);
+    // useEffect(()=>{
+    //     console.log(allTodo);
+    // }, [allTodo]);
 
     return(
         <View style={styles.container}>
